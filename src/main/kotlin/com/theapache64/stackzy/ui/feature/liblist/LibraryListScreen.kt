@@ -1,5 +1,6 @@
 package com.theapache64.stackzy.ui.feature.liblist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,6 +26,7 @@ import com.theapache64.stackzy.ui.common.loading.LoadingAnimation
 import com.theapache64.stackzy.util.R
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryListScreen(
     viewModel: LibraryListViewModel,
@@ -72,6 +74,7 @@ fun LibraryListScreen(
                 val message = (librariesResp as Resource.Loading<List<LibraryWrapper>>).message ?: ""
                 LoadingAnimation(message, funFacts = null)
             }
+
             is Resource.Error -> {
                 Box {
                     ErrorSnackBar(
@@ -79,18 +82,19 @@ fun LibraryListScreen(
                     )
                 }
             }
+
             is Resource.Success -> {
                 val libraries = (librariesResp as Resource.Success<List<LibraryWrapper>>).data
-
 
                 Column {
 
                     if (libraries.isNotEmpty()) {
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(4)
+                            columns = GridCells.Fixed(4),
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            items(libraries) { library ->
-                                Column {
+                            items(libraries, { it.id }) { library ->
+                                Column(modifier = Modifier.animateItemPlacement()) {
                                     // GridItem
                                     Selectable(
                                         modifier = Modifier.fillMaxWidth(),
@@ -118,6 +122,7 @@ fun LibraryListScreen(
                 }
 
             }
+
             null -> {
                 LoadingAnimation("Preparing apps...", funFacts = null)
             }

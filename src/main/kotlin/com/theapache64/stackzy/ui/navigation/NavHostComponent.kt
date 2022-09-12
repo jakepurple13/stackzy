@@ -3,12 +3,12 @@ package com.theapache64.stackzy.ui.navigation
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.animation.child.crossfadeScale
-import com.arkivanov.decompose.router.pop
-import com.arkivanov.decompose.router.push
-import com.arkivanov.decompose.router.replaceCurrent
-import com.arkivanov.decompose.router.router
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import com.arkivanov.decompose.router.stack.*
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.github.theapache64.gpa.model.Account
 import com.theapache64.stackzy.di.AppComponent
@@ -64,10 +64,13 @@ class NavHostComponent(
     private val appComponent: AppComponent = DaggerAppComponent
         .create()
 
+    private val navigator = StackNavigation<Config>()
+
     /**
      * Router configuration
      */
-    private val router = router<Config, Component>(
+    private val router = childStack(
+        source = navigator,
         initialConfiguration = Config.Splash,
         childFactory = ::createScreenComponent
     )
@@ -148,7 +151,7 @@ class NavHostComponent(
      * Invoked when a library clicked
      */
     private fun onLibraryClicked(libraryWrapper: LibraryWrapper) {
-        router.push(Config.LibraryDetail(libraryWrapper))
+        navigator.push(Config.LibraryDetail(libraryWrapper))
     }
 
 
@@ -156,8 +159,8 @@ class NavHostComponent(
     @Composable
     override fun render() {
         Children(
-            routerState = router.state,
-            animation = crossfadeScale()
+            stack = router,
+            animation = stackAnimation(scale() + fade())
         ) { child ->
             child.instance.render()
         }
@@ -167,8 +170,8 @@ class NavHostComponent(
      * Invoked when splash finish data sync
      */
     private fun onSplashSyncFinished() {
-        router.replaceCurrent(Config.SelectPathway)
-        /*router.push(
+        navigator.replaceCurrent(Config.SelectPathway)
+        /*navigator.push(
             Config.AppDetail(
                 AndroidDevice(
                     "Samsung",
@@ -191,14 +194,14 @@ class NavHostComponent(
      */
     private fun onPathwayPlayStoreSelected(account: Account) {
         Arbor.d("Showing select app")
-        router.push(Config.AppList(ApkSource.PlayStore(account)))
+        navigator.push(Config.AppList(ApkSource.PlayStore(account)))
     }
 
     /**
      * This method will be invoked when login is needed (either login pressed or authentication failed)
      */
     private fun onLogInNeeded(shouldGoToPlayStore: Boolean) {
-        router.push(Config.LogIn(shouldGoToPlayStore))
+        navigator.push(Config.LogIn(shouldGoToPlayStore))
     }
 
     /**
@@ -206,10 +209,10 @@ class NavHostComponent(
      */
     private fun onLoggedIn(shouldGoToPlayStore: Boolean, account: Account) {
         if (shouldGoToPlayStore) {
-            router.replaceCurrent(Config.AppList(ApkSource.PlayStore(account)))
+            navigator.replaceCurrent(Config.AppList(ApkSource.PlayStore(account)))
         } else {
             Arbor.d("onLoggedIn: Moving back...")
-            router.pop()
+            navigator.pop()
         }
     }
 
@@ -217,18 +220,18 @@ class NavHostComponent(
      * Invoked when adb selected from the pathway screen
      */
     private fun onPathwayAdbSelected() {
-        router.push(Config.DeviceList)
+        navigator.push(Config.DeviceList)
     }
 
     private fun onPathwayLibrariesSelected() {
-        router.push(Config.LibraryList)
+        navigator.push(Config.LibraryList)
     }
 
     /**
      * Invoked when a device selected
      */
     private fun onDeviceSelected(androidDevice: AndroidDeviceWrapper) {
-        router.push(Config.AppList(ApkSource.Adb(androidDevice)))
+        navigator.push(Config.AppList(ApkSource.Adb(androidDevice)))
     }
 
     /**
@@ -238,7 +241,7 @@ class NavHostComponent(
         apkSource: ApkSource<AndroidDeviceWrapper, Account>,
         androidAppWrapper: AndroidAppWrapper
     ) {
-        router.push(
+        navigator.push(
             Config.AppDetail(
                 apkSource = apkSource,
                 androidApp = androidAppWrapper
@@ -258,7 +261,7 @@ class NavHostComponent(
      */
     private fun onUpdateNeeded() {
         println("Update needed")
-        router.push(Config.Update)
+        navigator.push(Config.Update)
     }
 
     /**
@@ -266,7 +269,7 @@ class NavHostComponent(
      */
     private fun onBackClicked() {
         Arbor.d("Back clicked popping")
-        router.pop()
+        navigator.pop()
     }
 
 

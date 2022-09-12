@@ -1,5 +1,6 @@
 package com.theapache64.stackzy.ui.feature.libdetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +19,7 @@ import com.theapache64.stackzy.ui.common.FullScreenError
 import com.theapache64.stackzy.ui.common.Selectable
 import com.theapache64.stackzy.ui.common.loading.LoadingAnimation
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryDetailScreen(
     viewModel: LibraryDetailViewModel,
@@ -37,6 +39,7 @@ fun LibraryDetailScreen(
                 val message = (appsResp as Resource.Loading<List<AndroidAppWrapper>>).message ?: ""
                 LoadingAnimation(message, funFacts = null)
             }
+
             is Resource.Error -> {
                 Box {
                     ErrorSnackBar(
@@ -44,18 +47,19 @@ fun LibraryDetailScreen(
                     )
                 }
             }
+
             is Resource.Success -> {
                 val libraries = (appsResp as Resource.Success<List<AndroidAppWrapper>>).data
-
 
                 Column {
 
                     if (libraries.isNotEmpty()) {
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(4)
+                            columns = GridCells.Fixed(4),
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            items(libraries) { library ->
-                                Column {
+                            items(libraries, { it.appPackage }) { library ->
+                                Column(modifier = Modifier.animateItemPlacement()) {
                                     // GridItem
                                     Selectable(
                                         modifier = Modifier.fillMaxWidth(),
@@ -81,6 +85,7 @@ fun LibraryDetailScreen(
                 }
 
             }
+
             null -> {
                 LoadingAnimation("Preparing apps...", null)
             }

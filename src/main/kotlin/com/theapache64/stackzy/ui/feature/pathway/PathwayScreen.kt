@@ -3,8 +3,12 @@ package com.theapache64.stackzy.ui.feature.pathway
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Adb
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,6 +17,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
@@ -79,7 +84,6 @@ fun PathwayScreen(
                 modifier = Modifier.height(40.dp)
             )
 
-
             Row {
                 if (isPlayStoreEnabled) {
                     PathwayCard(
@@ -97,7 +101,7 @@ fun PathwayScreen(
 
                 PathwayCard(
                     text = "ADB",
-                    icon = painterResource("drawables/usb.svg"),
+                    icon = Icons.Outlined.Adb,
                     onClicked = onAdbSelected,
                     onMouseEnter = viewModel::onAdbCardFocused,
                     onMouseLeave = viewModel::onCardFocusLost
@@ -110,7 +114,7 @@ fun PathwayScreen(
 
                     PathwayCard(
                         text = "Libraries",
-                        icon = painterResource("drawables/books.svg"),
+                        icon = Icons.Outlined.Book,
                         onClicked = onLibrariesSelected,
                         onMouseEnter = viewModel::onLibrariesCardFocused,
                         onMouseLeave = viewModel::onCardFocusLost
@@ -175,6 +179,63 @@ fun PathwayCard(
                 .fillMaxHeight(0.5f),
             contentDescription = "play store",
             colorFilter = ColorFilter.tint(MaterialTheme.colors.onSecondary)
+        )
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
+        )
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun PathwayCard(
+    modifier: Modifier = Modifier,
+    text: String,
+    icon: ImageVector,
+    onMouseEnter: () -> Unit,
+    onMouseLeave: () -> Unit,
+    onClicked: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .onPointerEvent(
+                eventType = PointerEventType.Enter,
+                onEvent = {
+                    onMouseEnter()
+                },
+            )
+            .onPointerEvent(
+                eventType = PointerEventType.Exit,
+                onEvent = {
+                    onMouseLeave()
+                }
+            )
+    ) {
+        /*Icon*/
+        Icon(
+            icon,
+            modifier = Modifier
+                .addHoverEffect(
+                    onClicked = onClicked,
+                    normalAlpha = 0.3f,
+                    cornerRadius = 10.dp
+                )
+                .padding(
+                    horizontal = 80.dp,
+                    vertical = 100.dp
+                )
+                .size(50.dp)
+                .fillMaxHeight(0.5f),
+            contentDescription = "play store",
+            tint = MaterialTheme.colors.onSecondary
         )
 
         Spacer(

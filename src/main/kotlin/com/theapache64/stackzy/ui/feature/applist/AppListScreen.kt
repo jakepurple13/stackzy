@@ -1,5 +1,6 @@
 package com.theapache64.stackzy.ui.feature.applist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,6 +28,7 @@ import com.theapache64.stackzy.util.R
 /**
  * To select an application from the selected device
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SelectAppScreen(
     appListViewModel: AppListViewModel,
@@ -117,9 +119,10 @@ fun SelectAppScreen(
                         // Grid
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(3),
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            items(items = apps) { app ->
-                                Column {
+                            items(items = apps, { it.appPackage }) { app ->
+                                Column(modifier = Modifier.animateItemPlacement()) {
                                     // GridItem
                                     Selectable(
                                         data = app,

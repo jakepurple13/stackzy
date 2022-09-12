@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.compose") version "1.2.0-alpha01-dev741"
 }
 
-val daggerVersion by extra("2.42")
+val daggerVersion by extra("2.43.2")
 val stackzyVersion by extra("1.2.5") // TODO : Change in App.kt also
 
 group = "com.theapache64"
@@ -29,8 +29,11 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
 
+    @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+    implementation(compose.material3)
+
     // Module dependencies
-    implementation(project(":data"))
+    implementation(projects.data)
 
     // Cyclone
     implementation("com.github.theapache64:cyclone:1.0.0-alpha02")
@@ -40,7 +43,7 @@ dependencies {
     kaptTest("com.google.dagger:dagger-compiler:$daggerVersion")
 
     // Decompose : Decompose
-    val decomposeVersion = "0.5.0" // FIXME : bump to latest
+    val decomposeVersion = "0.8.0"
     implementation("com.arkivanov.decompose:decompose-jvm:$decomposeVersion")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains-jvm:$decomposeVersion")
 
@@ -48,18 +51,18 @@ dependencies {
     implementation("com.github.theapache64:name-that-color:1.0.0-alpha02")
 
     // Kamel : Image loading library
-    implementation("com.alialbaali.kamel:kamel-image:0.3.0")
+    implementation("com.alialbaali.kamel:kamel-image:0.4.1")
 
-    val bouncyCastleVersion = "1.69"
+    val bouncyCastleVersion = "1.70"
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
 
     // Bugsnag
-    implementation("com.bugsnag:bugsnag:3.6.3")
+    implementation("com.bugsnag:bugsnag:3.6.4")
 
     /**
      * Testing Dependencies
      */
-    testImplementation("org.mockito:mockito-inline:4.2.0")
+    testImplementation("org.mockito:mockito-inline:4.7.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
     // DaggerMock
@@ -67,13 +70,13 @@ dependencies {
     testImplementation("com.github.fabioCollini.daggermock:daggermock-kotlin:0.8.5")
 
     // Mockito Core : Mockito mock objects library core API and implementation
-    testImplementation("org.mockito:mockito-core:4.2.0")
+    testImplementation("org.mockito:mockito-core:4.7.0")
 
     // Expekt : An assertion library for Kotlin
     testImplementation("com.github.theapache64:expekt:1.0.0")
 
     // JUnit
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 }
 
 tasks.test {

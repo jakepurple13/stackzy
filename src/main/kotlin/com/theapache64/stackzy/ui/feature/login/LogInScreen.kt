@@ -14,7 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusOrder
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -121,7 +122,6 @@ private fun Form(
                 .padding(20.dp)
         ) {
 
-
             // Warning: to protect your privacy, do not use your primary account, but 'register a secondary one' exclusively for use with
             // Stackzy.
             Text(
@@ -157,9 +157,8 @@ private fun Form(
                 },
                 onValueChange = onUsernameChanged,
                 modifier = Modifier.fillMaxWidth()
-                    .focusOrder(usernameRef) {
-                        next = passwordRef
-                    },
+                    .focusRequester(usernameRef)
+                    .focusProperties { next = passwordRef },
                 isError = isUsernameError
             )
 
@@ -183,7 +182,7 @@ private fun Form(
                     )
                 },
                 onValueChange = onPasswordChanged,
-                modifier = Modifier.fillMaxWidth().focusOrder(passwordRef),
+                modifier = Modifier.fillMaxWidth().focusRequester(passwordRef),
                 visualTransformation = if (isPasswordVisible) {
                     VisualTransformation.None
                 } else {

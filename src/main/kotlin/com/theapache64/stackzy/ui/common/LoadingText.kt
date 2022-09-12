@@ -1,6 +1,8 @@
 package com.theapache64.stackzy.ui.common
 
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -14,18 +16,9 @@ fun LoadingText(
 ) {
     var enabled by remember { mutableStateOf(true) }
 
-    val alpha = if (enabled) {
-        1f
-    } else {
-        0.2f
-    }
-
     val animatedAlpha by animateFloatAsState(
-        targetValue = alpha,
-        animationSpec = tween(200),
-        finishedListener = {
-            enabled = !enabled
-        }
+        targetValue = if (enabled) 1f else 0.2f,
+        animationSpec = infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
     )
 
     Text(

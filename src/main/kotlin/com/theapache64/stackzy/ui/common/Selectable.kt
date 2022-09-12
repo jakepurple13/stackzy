@@ -161,7 +161,7 @@ fun <T : AlphabetCircle> Selectable(
             }
         }
 
-        if (data.isNew() == true) {
+        if (data.isNew()) {
             // TODO: Find a good position
             Text(
                 text = "✨",

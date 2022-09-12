@@ -1,7 +1,9 @@
 package com.theapache64.stackzy.ui.feature.appdetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +20,7 @@ import com.theapache64.stackzy.ui.common.GradientMargin
 import com.theapache64.stackzy.ui.common.Selectable
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Libraries(
     report: AnalysisReportWrapper,
@@ -45,12 +48,14 @@ fun Libraries(
     } else {
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(4)
+            columns = GridCells.Fixed(4),
+            modifier = Modifier.fillMaxSize()
         ) {
             items(
-                items = report.libraryWrappers
+                items = report.libraryWrappers,
+                { it.id }
             ) { app ->
-                Column {
+                Column(modifier = Modifier.animateItemPlacement()) {
                     // GridItem
                     Selectable(
                         data = app,
