@@ -137,6 +137,7 @@ class AppListViewModel @Inject constructor(
                             // filter for active tab
                             it.isSystemApp == (selectedTabIndex.value == TAB_SYSTEM_APPS_ID)
                         }
+                        ?.sortedBy { it.appPackage.name }
                         ?: listOf()
 
                     _apps.value = Resource.Success(filteredApps.map { AndroidAppWrapper(it) })

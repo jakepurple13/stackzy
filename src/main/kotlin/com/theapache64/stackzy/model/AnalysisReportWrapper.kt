@@ -5,5 +5,6 @@ import com.theapache64.stackzy.data.local.AnalysisReportDefinition
 
 class AnalysisReportWrapper(
     private val report: AnalysisReport,
-    val libraryWrappers: List<LibraryWrapper>
+    val libraryWrappers: List<LibraryWrapper>,
+    val untrackedLibraryWrapper: List<LibraryWrapper>
 ) : AnalysisReportDefinition by report

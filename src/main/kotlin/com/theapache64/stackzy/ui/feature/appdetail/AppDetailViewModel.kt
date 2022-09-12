@@ -86,7 +86,6 @@ class AppDetailViewModel @Inject constructor(
      * To start the decompiling and analysis from given source
      */
     fun startDecompile() {
-
         viewModelScope.launch {
             if (androidAppWrapper.versionCode != null && config.shouldConsiderResultCache) {
                 // We've version code here, so we can check results to see if this app has already decompiled by anyone
@@ -169,7 +168,6 @@ class AppDetailViewModel @Inject constructor(
             permissions = getFullPermissionsFromPermissions(result.permissions),
             gradleInfo = resultsRepo.parseGradleInfo(result.gradleInfoJson)!! // this shouldn't be null
         )
-
 
         onReportReady(report, prevResult)
     }
@@ -375,9 +373,19 @@ class AppDetailViewModel @Inject constructor(
     ) {
         _analysisReport.value = AnalysisReportWrapper(
             report,
-            report.libraries.map { library ->
-                LibraryWrapper(library, prevResult)
-            }
+            report.libraries.map { library -> LibraryWrapper(library, prevResult) },
+            report.untrackedLibraries
+                .map {
+                    Library(
+                        category = it,
+                        id = it.hashCode(),
+                        name = it.split(".").lastOrNull() ?: it,
+                        packageName = it,
+                        replacementPackage = null,
+                        website = "https://www.google.com/search?q=$it",
+                    )
+                }
+                .map { library -> LibraryWrapper(library, prevResult) }
         )
         _loadingMessage.value = null
 

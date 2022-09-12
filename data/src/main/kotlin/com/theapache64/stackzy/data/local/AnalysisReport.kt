@@ -19,7 +19,7 @@ interface AnalysisReportDefinition {
     val gradleInfo: GradleInfo
 }
 
-class AnalysisReport(
+data class AnalysisReport(
     override val appName: String?,
     override val packageName: String,
     override val platform: Platform,

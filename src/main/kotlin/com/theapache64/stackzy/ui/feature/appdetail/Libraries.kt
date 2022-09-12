@@ -24,10 +24,10 @@ import com.theapache64.stackzy.ui.common.Selectable
 @Composable
 fun Libraries(
     report: AnalysisReportWrapper,
-    onLibrarySelected: (LibraryWrapper) -> Unit
+    onLibrarySelected: (LibraryWrapper) -> Unit,
 ) {
 
-    if (report.libraries.isEmpty()) {
+    if (report.libraries.isEmpty() && report.untrackedLibraries.isEmpty()) {
         // No libraries found
         val platform = report.platform
         if (platform is Platform.NativeKotlin || platform is Platform.NativeJava) {
@@ -46,13 +46,29 @@ fun Libraries(
             )
         }
     } else {
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxSize()
         ) {
             items(
                 items = report.libraryWrappers,
+                { it.id }
+            ) { app ->
+                Column(modifier = Modifier.animateItemPlacement()) {
+                    // GridItem
+                    Selectable(
+                        data = app,
+                        onSelected = onLibrarySelected
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(10.dp)
+                    )
+                }
+            }
+
+            items(
+                items = report.untrackedLibraryWrapper,
                 { it.id }
             ) { app ->
                 Column(modifier = Modifier.animateItemPlacement()) {
