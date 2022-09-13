@@ -27,6 +27,10 @@ defaults:
   run:
     shell: bash
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build Package
@@ -64,10 +68,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      #      - name: Gradle Build
-      #        id: gradle-build
-      #        run: ./gradlew packageUberJarForCurrentOS package
-
       - name: Build Release App
         run: |
           ./gradlew packageUberJarForCurrentOS
@@ -81,26 +81,34 @@ jobs:
           path: |
             build/**/*.deb
             build/**/*.msi
+            build/**/*.exe
             build/compose/jars/*.jar
 
-  #      - name: Uploading ${{ matrix.os }} uber jar
-  #        if: steps.gradle-build.outcome == 'success'
-  #        uses: actions/upload-artifact@v3
-  #        with:
-  #          name: ${{ steps.gradle-build.outputs.uber_jar_name }}
-  #          path: |
-  #            ${{ steps.gradle-build.outputs.uber_jar_path }}
-  #          if-no-files-found: error
-  #
-  #      - name: Uploading ${{ matrix.os }} native package
-  #        if: steps.gradle-build.outcome == 'success'
-  #        uses: actions/upload-artifact@v3
-  #        with:
-  #          name: ${{ steps.gradle-build.outputs.app_pkg_name }}
-  #          path: |
-  #            ${{ steps.gradle-build.outputs.app_pkg_path }}
-  #          if-no-files-found: error
+  changelog:
+    name: Changelog
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/config/configuration.json"
+          commitMode: true
+          ignorePreReleases: ${{ !contains(github.ref, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@91409e712cf565ce9eff10c87a8d1b11b81757ae
+        with:
+          body: ${{steps.github_release.outputs.changelog}}
+          prerelease: ${{ contains(github.event.inputs.version, '-rc') || contains(github.event.inputs.version, '-b') || contains(github.event.inputs.version, '-a') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     name: Release new version.
@@ -113,20 +121,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - uses: ffurrer2/extract-release-notes@v1.14.0
-        id: extract_release_notes
-        if: ${{ false }}
-
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
-        with:
-          configuration: ".github/config/configuration.json"
-          commitMode: true
-          ignorePreReleases: ${{ !contains(github.ref, '-') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download all the build artifacts
         uses: actions/download-artifact@v3
