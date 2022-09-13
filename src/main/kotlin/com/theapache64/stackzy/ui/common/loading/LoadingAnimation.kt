@@ -1,16 +1,14 @@
 package com.theapache64.stackzy.ui.common.loading
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -27,12 +25,11 @@ fun LoadingAnimation(
     message: String,
     funFacts: Set<FunFact>?
 ) {
+    val transition = rememberInfiniteTransition()
 
-    var isRotated by remember { mutableStateOf(false) }
-
-    val animatedRotation by animateFloatAsState(
-        targetValue = if (isRotated) 0f else 90f,
-        animationSpec = infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
+    val rotate by transition.animateFloat(
+        0f, 90f,
+        infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
     )
 
     Box(
@@ -44,7 +41,7 @@ fun LoadingAnimation(
             Icon(
                 Icons.Default.Autorenew,
                 modifier = Modifier
-                    .rotate(animatedRotation)
+                    .rotate(rotate)
                     .align(Alignment.CenterHorizontally)
                     .size(50.dp),
                 tint = MaterialTheme.colors.primary,
@@ -62,11 +59,6 @@ fun LoadingAnimation(
             message = message
         )
     }
-
-    LaunchedEffect(Unit) {
-        // Ignite the animation
-        isRotated = !isRotated
-    }
 }
 
 @Composable
@@ -74,12 +66,11 @@ fun LoadingAnimation(
     message: String,
     progress: Double
 ) {
+    val transition = rememberInfiniteTransition()
 
-    var isRotated by remember { mutableStateOf(false) }
-
-    val animatedRotation by animateFloatAsState(
-        targetValue = if (isRotated) 0f else 90f,
-        animationSpec = infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
+    val rotate by transition.animateFloat(
+        0f, 90f,
+        infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
     )
 
     Box(
@@ -91,7 +82,7 @@ fun LoadingAnimation(
             Icon(
                 Icons.Default.Autorenew,
                 modifier = Modifier
-                    .rotate(animatedRotation)
+                    .rotate(rotate)
                     .align(Alignment.CenterHorizontally)
                     .size(50.dp),
                 tint = MaterialTheme.colors.primary,
@@ -108,10 +99,5 @@ fun LoadingAnimation(
             modifier = Modifier.align(Alignment.BottomCenter),
             message = message
         )
-    }
-
-    LaunchedEffect(Unit) {
-        // Ignite the animation
-        isRotated = !isRotated
     }
 }
