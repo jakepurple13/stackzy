@@ -23,7 +23,7 @@ import com.theapache64.stackzy.ui.common.*
 import com.theapache64.stackzy.ui.common.loading.LoadingAnimation
 import com.theapache64.stackzy.util.R
 import java.awt.datatransfer.DataFlavor
-import java.awt.dnd.*
+import java.awt.dnd.DnDConstants
 
 /**
  * To select an application from the selected device
@@ -63,39 +63,25 @@ fun SelectAppScreen(
         )
     }
 
-    val window = LocalWindow.current
-
-    LaunchedEffect(Unit) {
-        window.window.dropTarget = DropTarget().apply {
-            addDropTargetListener(object : DropTargetAdapter() {
-                override fun dragEnter(dtde: DropTargetDragEvent?) {
-                    super.dragEnter(dtde)
-                    appListViewModel.uiState = AppListState.DragDrop
-                }
-
-                override fun drop(event: DropTargetDropEvent) {
-                    event.acceptDrop(DnDConstants.ACTION_COPY)
-                    val draggedFileName = event.transferable.getTransferData(DataFlavor.javaFileListFlavor)
-                    println(draggedFileName)
-                    when (draggedFileName) {
-                        is List<*> -> {
-                            draggedFileName.firstOrNull()?.toString()?.let {
-                                if (it.endsWith(".apk")) {
-                                    appListViewModel.installApk(it)
-                                }
-                            }
+    DragDropHandler(
+        dragEnter = { appListViewModel.uiState = AppListState.DragDrop },
+        drop = { event ->
+            event.acceptDrop(DnDConstants.ACTION_COPY)
+            val draggedFileName = event.transferable.getTransferData(DataFlavor.javaFileListFlavor)
+            println(draggedFileName)
+            when (draggedFileName) {
+                is List<*> -> {
+                    draggedFileName.firstOrNull()?.toString()?.let {
+                        if (it.endsWith(".apk")) {
+                            appListViewModel.installApk(it)
                         }
                     }
-                    event.dropComplete(true)
                 }
-
-                override fun dragExit(dte: DropTargetEvent?) {
-                    super.dragExit(dte)
-                    appListViewModel.uiState = AppListState.Default
-                }
-            })
-        }
-    }
+            }
+            event.dropComplete(true)
+        },
+        dragExit = { appListViewModel.uiState = AppListState.Default }
+    )
 
     Crossfade(appListViewModel.uiState) { installing ->
         when (installing) {
