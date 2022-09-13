@@ -150,6 +150,7 @@ compileTestKotlin.kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
 
+/*
 gradle.buildFinished {
     val pkgTasks =
         project.gradle.startParameter.taskNames.filter { it.startsWith("package", ignoreCase = true) }
@@ -178,4 +179,4 @@ fun File?.ghActionOutput(prefix: String) = this?.let {
 
         else -> println("$prefix: $this")
     }
-}
+}*/
