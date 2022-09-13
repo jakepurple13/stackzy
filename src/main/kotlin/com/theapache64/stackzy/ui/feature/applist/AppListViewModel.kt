@@ -1,9 +1,13 @@
 package com.theapache64.stackzy.ui.feature.applist
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.github.theapache64.gpa.api.Play
 import com.github.theapache64.gpa.model.Account
 import com.theapache64.stackzy.data.local.AndroidApp
 import com.theapache64.stackzy.data.repo.AdbRepo
+import com.theapache64.stackzy.data.repo.InstallResource
 import com.theapache64.stackzy.data.repo.PlayStoreRepo
 import com.theapache64.stackzy.data.util.calladapter.flow.Resource
 import com.theapache64.stackzy.model.AndroidAppWrapper
@@ -15,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -194,7 +199,6 @@ class AppListViewModel @Inject constructor(
 
     }
 
-
     fun onOpenMarketClicked() {
         if (apkSource is ApkSource.Adb) {
             viewModelScope.launch {
@@ -215,4 +219,35 @@ class AppListViewModel @Inject constructor(
         // filter the apps accordingly.
         onSearchKeywordChanged(searchKeyword.value)
     }
+
+    var installingProgress by mutableStateOf(0.0)
+    var uiState by mutableStateOf(AppListState.Default)
+    var installingError: String? by mutableStateOf(null)
+
+    fun installApk(file: String) {
+        val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
+        viewModelScope.launch {
+            uiState = AppListState.Installing
+            adbRepo.installApk(
+                androidDeviceWrapper.androidDevice,
+                File(file)
+            ) {
+                when (it) {
+                    is InstallResource.Error -> {
+                        println(it.errorData)
+                        uiState = AppListState.Default
+                        installingError = it.errorData
+                    }
+
+                    is InstallResource.Loading -> installingProgress = it.progress
+                    is InstallResource.Success -> {
+                        loadApps()
+                        uiState = AppListState.Default
+                    }
+                }
+            }
+        }
+    }
 }
+
+enum class AppListState { Installing, DragDrop, Default }

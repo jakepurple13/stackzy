@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
@@ -54,6 +55,53 @@ fun LoadingAnimation(
                 Spacer(modifier = Modifier.height(15.dp))
                 FunFact(funFacts)
             }
+        }
+
+        LoadingText(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            message = message
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        // Ignite the animation
+        isRotated = !isRotated
+    }
+}
+
+@Composable
+fun LoadingAnimation(
+    message: String,
+    progress: Double
+) {
+
+    var isRotated by remember { mutableStateOf(false) }
+
+    val animatedRotation by animateFloatAsState(
+        targetValue = if (isRotated) 0f else 90f,
+        animationSpec = infiniteRepeatable(tween(200), repeatMode = RepeatMode.Reverse),
+    )
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+        ) {
+            Icon(
+                Icons.Default.Autorenew,
+                modifier = Modifier
+                    .rotate(animatedRotation)
+                    .align(Alignment.CenterHorizontally)
+                    .size(50.dp),
+                tint = MaterialTheme.colors.primary,
+                contentDescription = ""
+            )
+
+            LinearProgressIndicator(
+                progress.toFloat(),
+                modifier = Modifier.height(15.dp)
+            )
         }
 
         LoadingText(

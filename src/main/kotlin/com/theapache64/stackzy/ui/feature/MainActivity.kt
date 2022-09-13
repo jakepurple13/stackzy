@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.theapache64.cyclone.core.Activity
 import com.theapache64.cyclone.core.Intent
 import com.theapache64.stackzy.App
+import com.theapache64.stackzy.ui.common.LocalWindow
 import com.theapache64.stackzy.ui.navigation.NavHostComponent
 import com.theapache64.stackzy.ui.theme.R
 import com.theapache64.stackzy.ui.theme.StackzyTheme
@@ -72,45 +74,47 @@ class MainActivity : Activity() {
                 undecorated = true,
                 transparent = true
             ) {
-                StackzyTheme {
-                    Surface(
-                        shape = when (hostOs) {
-                            OS.Linux -> RoundedCornerShape(8.dp)
-                            OS.Windows -> RectangleShape
-                            OS.MacOS -> RoundedCornerShape(8.dp)
-                            else -> RoundedCornerShape(8.dp)
-                        }
-                    ) {
-                        Column {
-                            WindowDraggableArea(
-                                modifier = Modifier.combinedClickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    onClick = {},
-                                    onDoubleClick = {
-                                        state.placement = if (state.placement != WindowPlacement.Maximized) {
-                                            WindowPlacement.Maximized
-                                        } else {
-                                            WindowPlacement.Floating
+                CompositionLocalProvider(LocalWindow provides this) {
+                    StackzyTheme {
+                        Surface(
+                            shape = when (hostOs) {
+                                OS.Linux -> RoundedCornerShape(8.dp)
+                                OS.Windows -> RectangleShape
+                                OS.MacOS -> RoundedCornerShape(8.dp)
+                                else -> RoundedCornerShape(8.dp)
+                            }
+                        ) {
+                            Column {
+                                WindowDraggableArea(
+                                    modifier = Modifier.combinedClickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        onClick = {},
+                                        onDoubleClick = {
+                                            state.placement = if (state.placement != WindowPlacement.Maximized) {
+                                                WindowPlacement.Maximized
+                                            } else {
+                                                WindowPlacement.Floating
+                                            }
+                                        }
+                                    )
+                                ) {
+                                    TopAppBar(
+                                        backgroundColor = MaterialTheme.colors.surface,
+                                        elevation = 0.dp,
+                                    ) {
+                                        when (hostOs) {
+                                            OS.Linux -> LinuxTopBar(state)
+                                            OS.Windows -> WindowsTopBar(state)
+                                            OS.MacOS -> MacOsTopBar(state)
+                                            else -> {}
                                         }
                                     }
-                                )
-                            ) {
-                                TopAppBar(
-                                    backgroundColor = MaterialTheme.colors.surface,
-                                    elevation = 0.dp,
-                                ) {
-                                    when (hostOs) {
-                                        OS.Linux -> LinuxTopBar(state)
-                                        OS.Windows -> WindowsTopBar(state)
-                                        OS.MacOS -> MacOsTopBar(state)
-                                        else -> {}
-                                    }
                                 }
+                                Divider(color = MaterialTheme.colors.onSurface)
+                                // Igniting navigation
+                                root.render()
                             }
-                            Divider(color = MaterialTheme.colors.onSurface)
-                            // Igniting navigation
-                            root.render()
                         }
                     }
                 }

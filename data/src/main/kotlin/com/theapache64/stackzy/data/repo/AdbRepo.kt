@@ -2,14 +2,17 @@ package com.theapache64.stackzy.data.repo
 
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.interactor.StartAdbInteractor
+import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.device.AsyncDeviceMonitorRequest
 import com.malinskiy.adam.request.device.Device
 import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.device.ListDevicesRequest
+import com.malinskiy.adam.request.pkg.InstallRemotePackageRequest
 import com.malinskiy.adam.request.pkg.Package
 import com.malinskiy.adam.request.prop.GetPropRequest
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 import com.malinskiy.adam.request.sync.v1.PullFileRequest
+import com.malinskiy.adam.request.sync.v2.PushFileRequest
 import com.theapache64.stackzy.data.local.AndroidApp
 import com.theapache64.stackzy.data.local.AndroidDevice
 import com.theapache64.stackzy.util.OSType
@@ -298,9 +301,7 @@ class AdbRepo @Inject constructor(
                         val dllFile = File("$ADB_ROOT_DIR${File.separator}$dllFileName")
 
                         with(dllFile) {
-                            FileOutputStream(this).use {
-                                zis.copyTo(it)
-                            }
+                            FileOutputStream(this).use { zis.copyTo(it) }
 
                             setExecutable(true, false)
                             setReadable(true, false)
@@ -320,6 +321,51 @@ class AdbRepo @Inject constructor(
             throw IOException("Failed to find $adbZipEntryName from ${pToolZipFile.absolutePath}")
         }
     }
+
+    suspend fun installApk(
+        androidDevice: AndroidDevice,
+        file: File,
+        emit: (InstallResource<Double>) -> Unit
+    ) {
+        emit(InstallResource.Loading(0.0))
+        val channel = adb.execute(
+            PushFileRequest(
+                file,
+                "/data/local/tmp/${file.name}",
+                supportedFeatures = listOf(Feature.SENDRECV_V2)
+            ),
+            GlobalScope,
+            serial = androidDevice.device.serial
+        )
+        try {
+            while (!channel.isClosedForReceive) {
+                val progress: Double = channel.receive()
+                emit(InstallResource.Loading(progress))
+            }
+
+            val output = adb.execute(
+                InstallRemotePackageRequest(
+                    "/data/local/tmp/${file.name}",
+                    true
+                ),
+                serial = androidDevice.device.serial
+            )
+
+            if (!output.output.startsWith("Success")) emit(InstallResource.Error("Not Installed"))
+            else emit(InstallResource.Success())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(InstallResource.Error(e.message ?: "Not Installed"))
+        }
+    }
+}
+
+sealed class InstallResource<T> {
+    class Loading<T>(val progress: T) : InstallResource<T>()
+
+    class Success<T> : InstallResource<T>()
+
+    data class Error<T>(val errorData: String) : InstallResource<T>()
 }
 
 
