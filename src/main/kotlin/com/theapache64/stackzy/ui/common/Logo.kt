@@ -12,7 +12,6 @@ import com.theapache64.stackzy.util.R
 fun Logo(
     modifier: Modifier = Modifier
 ) {
-
     Image(
         contentDescription = R.string.logo,
         painter = painterResource("drawables/logo.svg"),

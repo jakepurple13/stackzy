@@ -180,7 +180,7 @@ fun LabelNew() {
 private fun <T : AlphabetCircle> AlphabetCircle(data: T) {
     AlphabetCircle(
         character = data.getAlphabet(),
-        color = data.getGradientColor(),
+        color = remember(data.getAlphabet()) { data.getGradientColor() },
         modifier = Modifier.size(60.dp),
         isNew = data.isNew()
     )
