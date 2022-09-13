@@ -334,35 +334,39 @@ class AdbRepo @Inject constructor(
         file: File,
         emit: (InstallResource<Double>) -> Unit
     ) {
-        emit(InstallResource.Loading(0.0))
-        val channel = adb.execute(
-            PushFileRequest(
-                file,
-                "/data/local/tmp/${file.name}",
-                supportedFeatures = listOf(Feature.SENDRECV_V2)
-            ),
-            GlobalScope,
-            serial = androidDevice.device.serial
-        )
-        try {
-            while (!channel.isClosedForReceive) {
-                val progress: Double = channel.receive()
-                emit(InstallResource.Loading(progress))
-            }
-
-            val output = adb.execute(
-                InstallRemotePackageRequest(
+        if (file.exists()) {
+            emit(InstallResource.Loading(0.0))
+            val channel = adb.execute(
+                PushFileRequest(
+                    file,
                     "/data/local/tmp/${file.name}",
-                    true
+                    supportedFeatures = listOf(Feature.SENDRECV_V2)
                 ),
+                GlobalScope,
                 serial = androidDevice.device.serial
             )
+            try {
+                while (!channel.isClosedForReceive) {
+                    val progress: Double = channel.receive()
+                    emit(InstallResource.Loading(progress))
+                }
 
-            if (!output.output.startsWith("Success")) emit(InstallResource.Error("Not Installed"))
-            else emit(InstallResource.Success())
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(InstallResource.Error(e.message ?: "Not Installed"))
+                val output = adb.execute(
+                    InstallRemotePackageRequest(
+                        "/data/local/tmp/${file.name}",
+                        true
+                    ),
+                    serial = androidDevice.device.serial
+                )
+
+                if (!output.output.startsWith("Success")) emit(InstallResource.Error("Not Installed"))
+                else emit(InstallResource.Success())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(InstallResource.Error(e.message ?: "Not Installed"))
+            }
+        } else {
+            emit(InstallResource.Error("Invalid File"))
         }
     }
 
