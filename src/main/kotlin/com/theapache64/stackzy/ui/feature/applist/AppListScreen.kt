@@ -162,7 +162,6 @@ fun SelectAppScreen(
                     )
 
                     Column {
-
                         if (selectedTabIndex != AppListViewModel.TAB_NO_TAB) {
                             TabRow(
                                 selectedTabIndex = selectedTabIndex,
@@ -184,7 +183,6 @@ fun SelectAppScreen(
                         }
 
                         when (appsResponse) {
-
                             is Resource.Loading -> {
                                 val message = (appsResponse as Resource.Loading<List<AndroidAppWrapper>>).message ?: ""
                                 LoadingAnimation(message, funFacts = null)
