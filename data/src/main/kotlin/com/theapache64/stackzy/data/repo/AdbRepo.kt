@@ -7,6 +7,8 @@ import com.malinskiy.adam.request.device.AsyncDeviceMonitorRequest
 import com.malinskiy.adam.request.device.Device
 import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.device.ListDevicesRequest
+import com.malinskiy.adam.request.framebuffer.RawImageScreenCaptureAdapter
+import com.malinskiy.adam.request.framebuffer.ScreenCaptureRequest
 import com.malinskiy.adam.request.pkg.InstallRemotePackageRequest
 import com.malinskiy.adam.request.pkg.Package
 import com.malinskiy.adam.request.prop.GetPropRequest
@@ -26,7 +28,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.zip.ZipInputStream
+import javax.imageio.ImageIO
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.floor
@@ -60,6 +64,9 @@ class AdbRepo @Inject constructor(
             )
         }
     }
+
+    //Screen Shot 2022-09-06 at 14.49.05
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd 'at' HH.mm.ss")
 
     private var deviceEventsChannel: ReceiveChannel<List<Device>>? = null
 
@@ -356,6 +363,22 @@ class AdbRepo @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             emit(InstallResource.Error(e.message ?: "Not Installed"))
+        }
+    }
+
+    suspend fun screenshot(
+        androidDevice: AndroidDevice,
+    ) {
+        val adapter = RawImageScreenCaptureAdapter()
+        val image = adb.execute(
+            request = ScreenCaptureRequest(adapter),
+            serial = androidDevice.device.serial
+        ).toBufferedImage()
+
+        val desktop = System.getProperty("user.home") + "/Desktop"
+        val time = System.currentTimeMillis()
+        if (!ImageIO.write(image, "png", File("$desktop/Screen Shot ${dateFormat.format(time)}.png"))) {
+            throw IOException("Failed to find png writer")
         }
     }
 }

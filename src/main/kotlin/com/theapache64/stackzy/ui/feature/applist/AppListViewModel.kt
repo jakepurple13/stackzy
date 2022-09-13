@@ -80,6 +80,10 @@ class AppListViewModel @Inject constructor(
     private val _apps = MutableStateFlow<Resource<List<AndroidAppWrapper>>?>(null)
     val apps: StateFlow<Resource<List<AndroidAppWrapper>>?> = _apps
 
+    var installingProgress by mutableStateOf(0.0)
+    var uiState by mutableStateOf(AppListState.Default)
+    var error: String? by mutableStateOf(null)
+
     fun init(
         scope: CoroutineScope,
         apkSource: ApkSource<AndroidDeviceWrapper, Account>
@@ -220,10 +224,6 @@ class AppListViewModel @Inject constructor(
         onSearchKeywordChanged(searchKeyword.value)
     }
 
-    var installingProgress by mutableStateOf(0.0)
-    var uiState by mutableStateOf(AppListState.Default)
-    var installingError: String? by mutableStateOf(null)
-
     fun installApk(file: String) {
         val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
         viewModelScope.launch {
@@ -236,7 +236,7 @@ class AppListViewModel @Inject constructor(
                     is InstallResource.Error -> {
                         println(it.errorData)
                         uiState = AppListState.Default
-                        installingError = it.errorData
+                        error = it.errorData
                     }
 
                     is InstallResource.Loading -> installingProgress = it.progress
@@ -245,6 +245,17 @@ class AppListViewModel @Inject constructor(
                         uiState = AppListState.Default
                     }
                 }
+            }
+        }
+    }
+
+    fun screenshot() {
+        val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
+        viewModelScope.launch {
+            try {
+                adbRepo.screenshot(androidDeviceWrapper.androidDevice)
+            } catch (e: Exception) {
+                error = "Something went wrong"
             }
         }
     }

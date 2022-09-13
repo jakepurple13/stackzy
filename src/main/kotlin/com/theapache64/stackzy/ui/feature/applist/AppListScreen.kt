@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.InstallMobile
+import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,12 +54,12 @@ fun SelectAppScreen(
         }
     }
 
-    appListViewModel.installingError?.let {
+    appListViewModel.error?.let {
         AlertDialog(
-            onDismissRequest = { appListViewModel.installingError = null },
+            onDismissRequest = { appListViewModel.error = null },
             title = { Text("Something went wrong") },
             text = { Text(it) },
-            buttons = { TextButton(onClick = { appListViewModel.installingError = null }) { Text("Close") } }
+            buttons = { TextButton(onClick = { appListViewModel.error = null }) { Text("Close") } }
         )
     }
 
@@ -121,6 +122,10 @@ fun SelectAppScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            IconButton(
+                                onClick = { appListViewModel.screenshot() }
+                            ) { Icon(Icons.Default.Screenshot, null) }
+
                             IconButton(
                                 onClick = {
                                     installApk = true
