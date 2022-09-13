@@ -51,6 +51,9 @@ jobs:
           distribution: adopt
           java-version: 18
 
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v3.0.2
         with:
@@ -60,14 +63,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Deploy to GitHub Packages (Linux)
-        id: gradle-deploy
-        if: env.GITHUB_DEPLOY == 'true' && runner.os == 'Linux'
-        run: |
-          ./gradlew deploy
-        env:
-          GITHUB_USER: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       #      - name: Gradle Build
       #        id: gradle-build
