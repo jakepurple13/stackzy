@@ -80,6 +80,14 @@ class ApkAnalyzerRepoTest {
     }
 
     @Test
+    fun `Parse Manifest`() = runBlockingUnitTest {
+        getCachedDecompiledApk(NATIVE_KOTLIN_APK_FILE_NAME) { _, decompiledDir ->
+            val permissions = apkAnalyzerRepo.getManifest(decompiledDir)
+            permissions.length.should.above(0)
+        }
+    }
+
+    @Test
     fun `Parse gradle info`() = runBlockingUnitTest {
         getCachedDecompiledApk(NATIVE_KOTLIN_APK_FILE_NAME) { _, decompiledDir ->
             val gradleInfo = apkAnalyzerRepo.getGradleInfo(decompiledDir)
