@@ -90,36 +90,45 @@ class MainActivity : Activity() {
                             },
                             modifier = Modifier.animateContentSize()
                         ) {
-                            Column {
-                                WindowDraggableArea(
-                                    modifier = Modifier.combinedClickable(
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        onClick = {},
-                                        onDoubleClick = {
-                                            state.placement = if (state.placement != WindowPlacement.Maximized) {
-                                                WindowPlacement.Maximized
-                                            } else {
-                                                WindowPlacement.Floating
+                            Scaffold(
+                                topBar = {
+                                    Column {
+                                        WindowDraggableArea(
+                                            modifier = Modifier.combinedClickable(
+                                                indication = null,
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                onClick = {},
+                                                onDoubleClick = {
+                                                    state.placement =
+                                                        if (state.placement != WindowPlacement.Maximized) {
+                                                            WindowPlacement.Maximized
+                                                        } else {
+                                                            WindowPlacement.Floating
+                                                        }
+                                                }
+                                            )
+                                        ) {
+                                            TopAppBar(
+                                                backgroundColor = MaterialTheme.colors.surface,
+                                                elevation = 0.dp,
+                                            ) {
+                                                when (hostOs) {
+                                                    OS.Linux -> LinuxTopBar(state)
+                                                    OS.Windows -> WindowsTopBar(state)
+                                                    OS.MacOS -> MacOsTopBar(state)
+                                                    else -> {}
+                                                }
                                             }
                                         }
-                                    )
-                                ) {
-                                    TopAppBar(
-                                        backgroundColor = MaterialTheme.colors.surface,
-                                        elevation = 0.dp,
-                                    ) {
-                                        when (hostOs) {
-                                            OS.Linux -> LinuxTopBar(state)
-                                            OS.Windows -> WindowsTopBar(state)
-                                            OS.MacOS -> MacOsTopBar(state)
-                                            else -> {}
-                                        }
+                                        Divider(color = MaterialTheme.colors.onSurface)
                                     }
+                                },
+                                backgroundColor = MaterialTheme.colors.surface
+                            ) { padding ->
+                                Surface(modifier = Modifier.padding(padding)) {
+                                    // Igniting navigation
+                                    root.render()
                                 }
-                                Divider(color = MaterialTheme.colors.onSurface)
-                                // Igniting navigation
-                                root.render()
                             }
                         }
                     }
