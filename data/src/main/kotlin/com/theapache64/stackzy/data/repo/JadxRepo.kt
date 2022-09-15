@@ -13,9 +13,7 @@ import kotlin.io.path.div
 class JadxRepo @Inject constructor(
     @JadxDirPath val jadxDirPath: Path
 ) {
-    fun open(
-        apkFile: File
-    ) {
+    fun open(apkFile: File) {
         val jadxPath = jadxDirPath / "bin" / "jadx-gui"
         val jadX = if (OsCheck.operatingSystemType == OSType.Windows) {
             "${jadxPath.absolutePathString()}.bat" // execute bat

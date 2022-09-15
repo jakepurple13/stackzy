@@ -10,7 +10,7 @@ plugins {
 }
 
 val daggerVersion by extra("2.43.2")
-val stackzyVersion by extra("1.2.5") // TODO : Change in App.kt also
+val stackzyVersion by extra("1.3.5") // TODO : Change in App.kt also
 
 group = "com.theapache64"
 version = stackzyVersion

@@ -456,14 +456,12 @@ class AppDetailViewModel @Inject constructor(
     }
 
     fun onCodeIconClicked() {
-
         if (apkFile?.exists() == true) {
             // APK file exists
             GlobalScope.launch {
                 jadxRepo.open(apkFile!!)
             }
         } else {
-
             val possibleApkPath = if (androidAppWrapper.versionName != null) {
                 getDecompiledApkPath(
                     androidAppWrapper.appPackage.name,
