@@ -197,5 +197,4 @@ class SplashViewModel @Inject constructor(
     fun onRetryClicked() {
         syncData()
     }
-
 }

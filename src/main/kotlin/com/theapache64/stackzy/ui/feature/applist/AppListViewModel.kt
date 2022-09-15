@@ -1,5 +1,6 @@
 package com.theapache64.stackzy.ui.feature.applist
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -86,9 +87,9 @@ class AppListViewModel @Inject constructor(
     var uiState by mutableStateOf(AppListState.Default)
     var error: String? by mutableStateOf(null)
 
-    var hasScrcpy by mutableStateOf(false)
+    private val frameworkChecker = FrameworkChecker
 
-    private val frameworkChecker = FrameworkChecker()
+    val hasScrcpy by derivedStateOf { frameworkChecker.hasScrcpy }
 
     fun init(
         scope: CoroutineScope,
@@ -96,7 +97,7 @@ class AppListViewModel @Inject constructor(
     ) {
         this.viewModelScope = scope
         this.apkSource = apkSource
-        scope.launch { hasScrcpy = frameworkChecker.hasScrcpy() }
+        scope.launch { frameworkChecker.init() }
     }
 
     fun openScrcpy() {

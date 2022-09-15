@@ -105,9 +105,7 @@ fun SelectAppScreen(
                     onBackClicked = onBackClicked,
                     bottomGradient = hasData, // only for success
                     topRightSlot = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             if (appListViewModel.hasScrcpy) {
                                 TooltipBox("Open Scrcpy") {
                                     IconButton(onClick = { appListViewModel.openScrcpy() }) {

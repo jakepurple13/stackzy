@@ -154,6 +154,8 @@ private fun FrameWindowScope.MenuBar() {
     MenuBar {
         Menu("Addons") {
             CheckboxItem("Scrcpy", menuViewModel.hasScrcpy) { menuViewModel.openScrcpy() }
+            Separator()
+            Item("Refresh") { menuViewModel.refresh() }
         }
     }
 }
@@ -162,13 +164,17 @@ class MenuViewModel {
 
     private lateinit var viewModelScope: CoroutineScope
 
-    var hasScrcpy by mutableStateOf(false)
+    private val frameworkChecker = FrameworkChecker
 
-    private val frameworkChecker = FrameworkChecker()
+    val hasScrcpy by derivedStateOf { frameworkChecker.hasScrcpy }
 
     fun init(scope: CoroutineScope) {
         viewModelScope = scope
-        scope.launch { hasScrcpy = frameworkChecker.hasScrcpy() }
+        scope.launch { frameworkChecker.init() }
+    }
+
+    fun refresh() {
+        viewModelScope.launch { frameworkChecker.init() }
     }
 
     fun openScrcpy() {
