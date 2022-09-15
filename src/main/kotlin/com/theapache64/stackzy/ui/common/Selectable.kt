@@ -43,7 +43,7 @@ fun Modifier.addHoverEffect(
     normalColor: Color = MaterialTheme.colors.secondary,
     normalAlpha: Float = 0f,
     hoverAlpha: Float = 0.8f,
-    cornerRadius: Dp = 5.dp
+    cornerRadius: Dp = 4.dp
 ): Modifier {
     var isHovered by remember { mutableStateOf(false) }
     val backgroundAlpha by animateFloatAsState(if (isHovered) hoverAlpha else normalAlpha)
