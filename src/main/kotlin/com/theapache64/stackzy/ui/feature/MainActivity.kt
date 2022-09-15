@@ -67,8 +67,7 @@ class MainActivity : Activity() {
                 size = DpSize(
                     width = 1224.dp,
                     height = 900.dp
-                ),
-                position = WindowPosition(Alignment.Center)
+                )
             )
 
             setContent(

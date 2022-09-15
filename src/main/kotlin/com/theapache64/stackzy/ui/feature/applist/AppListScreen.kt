@@ -108,15 +108,17 @@ fun SelectAppScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(
-                                onClick = { appListViewModel.screenshot() }
-                            ) { Icon(Icons.Default.Screenshot, null) }
+                            TooltipBox("Take Screen Shot") {
+                                IconButton(
+                                    onClick = { appListViewModel.screenshot() }
+                                ) { Icon(Icons.Default.Screenshot, null) }
+                            }
 
-                            IconButton(
-                                onClick = {
-                                    installApk = true
-                                }
-                            ) { Icon(Icons.Default.InstallMobile, null) }
+                            TooltipBox("Install Apk") {
+                                IconButton(
+                                    onClick = { installApk = true }
+                                ) { Icon(Icons.Default.InstallMobile, null) }
+                            }
 
                             // SearchBox
                             OutlinedTextField(

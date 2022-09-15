@@ -1,8 +1,10 @@
 package com.theapache64.stackzy.ui.feature.appdetail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.MaterialTheme
@@ -240,12 +242,14 @@ private fun FullManifest(
             modifier = Modifier
                 .background(MaterialTheme.colors.secondary, RoundedCornerShape(5.dp))
                 .padding(codeViewerPadding)
+                .horizontalScroll(rememberScrollState())
         ) {
             SelectionContainer {
                 Text(
                     text = codeString(manifest),
                     fontFamily = firaCode,
-                    fontSize = codeViewerFontSize
+                    fontSize = codeViewerFontSize,
+                    softWrap = false
                 )
             }
         }

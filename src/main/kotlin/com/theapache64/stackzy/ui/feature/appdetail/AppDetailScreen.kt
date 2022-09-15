@@ -17,6 +17,7 @@ import com.theapache64.stackzy.model.LibraryWrapper
 import com.theapache64.stackzy.ui.common.Badge
 import com.theapache64.stackzy.ui.common.CustomScaffold
 import com.theapache64.stackzy.ui.common.FullScreenError
+import com.theapache64.stackzy.ui.common.TooltipBox
 import com.theapache64.stackzy.ui.common.loading.LoadingAnimation
 import com.theapache64.stackzy.util.R
 
@@ -51,21 +52,25 @@ fun AppDetailScreen(
                         // Badge
                         Badge("APK SIZE: ${it.apkSizeInMb} MB")
 
-                        Spacer(
-                            modifier = Modifier.width(5.dp)
-                        )
+                        Spacer(modifier = Modifier.width(4.dp))
 
                         // Launch app in play-store icon
-                        PlayStoreIcon {
-                            viewModel.onPlayStoreIconClicked()
+                        TooltipBox("Open in Play Store") {
+                            PlayStoreIcon {
+                                viewModel.onPlayStoreIconClicked()
+                            }
                         }
 
-                        FilesIcon {
-                            viewModel.onFilesIconClicked()
+                        TooltipBox("Open Files") {
+                            FilesIcon {
+                                viewModel.onFilesIconClicked()
+                            }
                         }
 
-                        CodeIcon {
-                            viewModel.onCodeIconClicked()
+                        TooltipBox("Browse Code") {
+                            CodeIcon {
+                                viewModel.onCodeIconClicked()
+                            }
                         }
                     }
                 }
