@@ -79,7 +79,6 @@ fun AppDetailScreen(
     ) {
 
         // Using backing property to prevent double bang usage.
-        @Suppress("UnnecessaryVariable")
         val roFatalError = fatalError
         if (roFatalError != null) {
             FullScreenError(
@@ -89,10 +88,8 @@ fun AppDetailScreen(
             )
         } else {
 
-            @Suppress("UnnecessaryVariable")
             val roReport = report
 
-            @Suppress("UnnecessaryVariable")
             val roLoadingMsg = loadingMessage
 
             if (roLoadingMsg != null) {

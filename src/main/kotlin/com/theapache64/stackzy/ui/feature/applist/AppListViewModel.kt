@@ -12,6 +12,7 @@ import com.theapache64.stackzy.data.repo.PlayStoreRepo
 import com.theapache64.stackzy.data.util.calladapter.flow.Resource
 import com.theapache64.stackzy.model.AndroidAppWrapper
 import com.theapache64.stackzy.model.AndroidDeviceWrapper
+import com.theapache64.stackzy.ui.util.FrameworkChecker
 import com.theapache64.stackzy.util.ApkSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -84,12 +86,25 @@ class AppListViewModel @Inject constructor(
     var uiState by mutableStateOf(AppListState.Default)
     var error: String? by mutableStateOf(null)
 
+    var hasScrcpy by mutableStateOf(false)
+
+    private val frameworkChecker = FrameworkChecker()
+
     fun init(
         scope: CoroutineScope,
         apkSource: ApkSource<AndroidDeviceWrapper, Account>
     ) {
         this.viewModelScope = scope
         this.apkSource = apkSource
+        scope.launch { hasScrcpy = frameworkChecker.hasScrcpy() }
+    }
+
+    fun openScrcpy() {
+        try {
+            Runtime.getRuntime().exec("scrcpy -s ${selectedDevice?.androidDevice?.device?.serial}")
+        } catch (e: IOException) {
+            error = e.message
+        }
     }
 
     fun loadApps() {

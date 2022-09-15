@@ -81,7 +81,6 @@ class AdbRepo @Inject constructor(
 
     fun watchConnectedDevice(): Flow<List<AndroidDevice>> {
         return flow {
-
             val isStarted = isAdbStarted()
 
             if (isStarted) {
@@ -143,9 +142,7 @@ class AdbRepo @Inject constructor(
             .split("\n") // parse line by line
             .filter { packageName -> packageName.isNotBlank() }
             .map { it.replace("package:", "").trim() } // filter package name
-            .map { packageName ->
-                AndroidApp(Package(packageName), isSystemApp = isSystemApp)
-            }
+            .map { packageName -> AndroidApp(Package(packageName), isSystemApp = isSystemApp) }
     }
 
     private suspend fun getInstalledPackagesByFlag(device: Device, flag: String): String = adb.execute(
@@ -153,9 +150,7 @@ class AdbRepo @Inject constructor(
         serial = device.serial
     ).output
 
-    private fun String.singleLine(): String {
-        return this.replace("\n", "")
-    }
+    private fun String.singleLine(): String = replace("\n", "")
 
     /**
      * To get APK path for given app from given device
@@ -214,7 +209,6 @@ class AdbRepo @Inject constructor(
             request = ShellCommandRequest("am start -a android.intent.action.VIEW -d \"$url\""),
             serial = androidDevice.device.serial
         )
-
     }
 
     /**
@@ -227,7 +221,6 @@ class AdbRepo @Inject constructor(
             ADB_ZIP_ENTRY_NAME
         }
     }
-
 
     private val adbFile by lazy {
         // only the filename (platform-tools/'adb/adb.exe')

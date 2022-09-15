@@ -10,9 +10,7 @@ import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -29,10 +27,15 @@ import com.theapache64.stackzy.ui.common.LocalWindow
 import com.theapache64.stackzy.ui.navigation.NavHostComponent
 import com.theapache64.stackzy.ui.theme.R
 import com.theapache64.stackzy.ui.theme.StackzyTheme
+import com.theapache64.stackzy.ui.util.FrameworkChecker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.skiko.OS
 import org.jetbrains.skiko.hostOs
+import java.awt.Desktop
 import java.awt.Taskbar
 import java.awt.image.BufferedImage
+import java.net.URI
 import javax.imageio.ImageIO
 import androidx.compose.ui.window.Window as setContent
 
@@ -80,6 +83,7 @@ class MainActivity : Activity() {
             ) {
                 CompositionLocalProvider(LocalWindow provides this) {
                     StackzyTheme {
+                        MenuBar()
                         Surface(
                             shape = when (hostOs) {
                                 OS.Linux -> RoundedCornerShape(8.dp)
@@ -135,6 +139,42 @@ class MainActivity : Activity() {
             }
         }
     }
+}
+
+@Composable
+private fun FrameWindowScope.MenuBar() {
+
+    val menuViewModel = remember { MenuViewModel() }
+
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(menuViewModel) {
+        menuViewModel.init(scope)
+    }
+
+    MenuBar {
+        Menu("Addons") {
+            CheckboxItem("Scrcpy", menuViewModel.hasScrcpy) { menuViewModel.openScrcpy() }
+        }
+    }
+}
+
+class MenuViewModel {
+
+    private lateinit var viewModelScope: CoroutineScope
+
+    var hasScrcpy by mutableStateOf(false)
+
+    private val frameworkChecker = FrameworkChecker()
+
+    fun init(scope: CoroutineScope) {
+        viewModelScope = scope
+        scope.launch { hasScrcpy = frameworkChecker.hasScrcpy() }
+    }
+
+    fun openScrcpy() {
+        Desktop.getDesktop().browse(URI("https://github.com/Genymobile/scrcpy"))
+    }
+
 }
 
 @Composable

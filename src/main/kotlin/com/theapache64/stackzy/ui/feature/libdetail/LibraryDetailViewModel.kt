@@ -27,7 +27,7 @@ class LibraryDetailViewModel @Inject constructor(
     private val _apps = MutableStateFlow<Resource<List<AndroidAppWrapper>>?>(null)
     val apps = _apps.asStateFlow()
 
-    private val _pageTitle = MutableStateFlow<String>("")
+    private val _pageTitle = MutableStateFlow("")
     val pageTitle = _pageTitle.asStateFlow()
 
     private val _searchKeyword = MutableStateFlow("")

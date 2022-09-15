@@ -68,7 +68,7 @@ class SplashViewModel @Inject constructor(
 
     private fun checkJdk(onExist: () -> Unit) {
         try {
-            Runtime.getRuntime().exec("java -version");
+            Runtime.getRuntime().exec("java -version")
             // jdk exists, pass callback
             onExist()
         } catch (e: IOException) {

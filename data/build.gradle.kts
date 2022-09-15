@@ -34,7 +34,7 @@ dependencies {
 
 
     // Kotlinx Coroutines Core : Coroutines support libraries for Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     // Arbor : Like Timber, just different.
     api("com.ToxicBakery.logging:arbor-jvm:1.37.80")

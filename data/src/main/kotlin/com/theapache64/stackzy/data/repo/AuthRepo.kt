@@ -47,7 +47,7 @@ class AuthRepo @Inject constructor(
      * To login with given google username and password
      */
     suspend fun logIn(username: String, password: String) = withContext(Dispatchers.IO) {
-        flow<Resource<Account>> {
+        flow {
             // Loading
             emit(Resource.Loading())
 

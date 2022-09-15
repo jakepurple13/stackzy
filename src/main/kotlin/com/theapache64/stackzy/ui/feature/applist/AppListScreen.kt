@@ -108,6 +108,18 @@ fun SelectAppScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            if (appListViewModel.hasScrcpy) {
+                                TooltipBox("Open Scrcpy") {
+                                    IconButton(onClick = { appListViewModel.openScrcpy() }) {
+                                        Icon(
+                                            painterResource("drawables/scrcpy_icon.svg"),
+                                            null,
+                                            tint = Color.Unspecified
+                                        )
+                                    }
+                                }
+                            }
+
                             TooltipBox("Take Screen Shot") {
                                 IconButton(
                                     onClick = { appListViewModel.screenshot() }
@@ -130,14 +142,8 @@ fun SelectAppScreen(
                                 },
                                 singleLine = true,
                                 value = searchKeyword,
-                                label = {
-                                    Text(
-                                        text = R.string.select_app_label_search,
-                                    )
-                                },
-                                onValueChange = {
-                                    appListViewModel.onSearchKeywordChanged(it)
-                                },
+                                label = { Text(text = R.string.select_app_label_search) },
+                                onValueChange = { appListViewModel.onSearchKeywordChanged(it) },
                                 modifier = Modifier
                                     .width(300.dp)
                             )

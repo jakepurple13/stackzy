@@ -83,7 +83,6 @@ class PlayStoreRepo @Inject constructor() {
     /**
      * To download APK for the given packageName and write to given apkFile using given account
      */
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun downloadApk(
         apkFile: File,
         account: Account,

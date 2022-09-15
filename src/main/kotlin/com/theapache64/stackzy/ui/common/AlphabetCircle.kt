@@ -29,9 +29,7 @@ fun AlphabetCircle(
         var currentScaleState by remember { mutableStateOf(DEFAULT_SCALE) }
 
         LaunchedEffect(Unit) {
-            if (isNew) {
-                currentScaleState = ANIMATED_SCALE
-            }
+            currentScaleState = ANIMATED_SCALE
         }
         animateFloatAsState(
             currentScaleState,
