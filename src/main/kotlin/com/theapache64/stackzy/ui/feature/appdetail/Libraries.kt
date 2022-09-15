@@ -26,7 +26,6 @@ fun Libraries(
     report: AnalysisReportWrapper,
     onLibrarySelected: (LibraryWrapper) -> Unit,
 ) {
-
     if (report.libraries.isEmpty() && report.untrackedLibraries.isEmpty()) {
         // No libraries found
         val platform = report.platform
@@ -66,10 +65,9 @@ fun Libraries(
             }
 
             items(
-                items = report.untrackedLibraryWrapper,
-                { it.id }
+                items = report.untrackedLibraryWrapper
             ) { app ->
-                Column(modifier = Modifier.animateItemPlacement()) {
+                Column {
                     // GridItem
                     Selectable(
                         data = app,
