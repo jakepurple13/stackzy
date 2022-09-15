@@ -119,11 +119,14 @@ fun SelectAppScreen(
                                         Icon(
                                             painterResource("drawables/scrcpy_icon.svg"),
                                             null,
-                                            tint = Color.Unspecified
+                                            tint = Color.Unspecified,
+                                            modifier = Modifier.size(32.dp)
                                         )
                                     }
                                 }
                             }
+
+                            Spacer(Modifier.width(6.dp))
 
                             TooltipBox("Take Screen Shot") {
                                 IconButton(
@@ -156,9 +159,7 @@ fun SelectAppScreen(
                     }
                 ) {
 
-                    Spacer(
-                        modifier = Modifier.height(20.dp)
-                    )
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Column {
                         if (selectedTabIndex != AppListViewModel.TAB_NO_TAB) {
