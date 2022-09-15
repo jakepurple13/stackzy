@@ -103,8 +103,7 @@ fun AppDetailScreen(
                             selectedTabIndex = selectedTabIndex,
                             backgroundColor = Color.Transparent,
                             contentColor = MaterialTheme.colors.primary,
-                            modifier = Modifier
-                                .fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             // Tabs
                             AppDetailViewModel.TABS.forEachIndexed { index, title ->

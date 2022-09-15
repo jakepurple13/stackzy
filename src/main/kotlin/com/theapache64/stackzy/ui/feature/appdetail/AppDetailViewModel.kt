@@ -166,7 +166,8 @@ class AppDetailViewModel @Inject constructor(
             apkSizeInMb = result.apkSizeInMb,
             assetsDir = null,
             permissions = getFullPermissionsFromPermissions(result.permissions),
-            gradleInfo = resultsRepo.parseGradleInfo(result.gradleInfoJson)!! // this shouldn't be null
+            gradleInfo = resultsRepo.parseGradleInfo(result.gradleInfoJson)!!, // this shouldn't be null
+            fullManifest = result.fullManifest
         )
 
         onReportReady(report, prevResult)

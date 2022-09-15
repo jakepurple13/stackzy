@@ -1,5 +1,7 @@
 package com.theapache64.stackzy.ui.common
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,36 +46,28 @@ fun Modifier.addHoverEffect(
     cornerRadius: Dp = 5.dp
 ): Modifier {
     var isHovered by remember { mutableStateOf(false) }
-    val backgroundAlpha = if (isHovered) {
-        hoverAlpha
-    } else {
-        normalAlpha
-    }
+    val backgroundAlpha by animateFloatAsState(if (isHovered) hoverAlpha else normalAlpha)
 
-    return this.background(normalColor.copy(alpha = backgroundAlpha), RoundedCornerShape(cornerRadius)).clickable {
-        onClicked()
-    }.onPointerEvent(eventType = PointerEventType.Enter, onEvent = {
-        isHovered = true
-    }).onPointerEvent(eventType = PointerEventType.Exit, onEvent = {
-        isHovered = false
-    })
+    return this.background(normalColor.copy(alpha = backgroundAlpha), RoundedCornerShape(cornerRadius))
+        .clickable { onClicked() }
+        .onPointerEvent(eventType = PointerEventType.Enter, onEvent = { isHovered = true })
+        .onPointerEvent(eventType = PointerEventType.Exit, onEvent = { isHovered = false })
 }
 
 // Preview
 fun main() = application {
-
     Window(onCloseRequest = {
         exitProcess(0)
     }) {
         StackzyTheme {
-            Selectable(data = object : AlphabetCircle() {
-                override fun getTitle() = "WhatsApp"
-                override fun getSubtitle() = "v1.0.0"
-                override fun imageUrl() =
-                    "https://play-lh.googleusercontent.com/X64En0aW6jkvDnd5kr16u-YuUsoJ1W2cBzJab3CQ5lObLeQ3T61DpB7AwIoZ7uqgCn4"
-            }, onSelected = {
-
-            })
+            Selectable(
+                data = object : AlphabetCircle() {
+                    override fun getTitle() = "WhatsApp"
+                    override fun getSubtitle() = "v1.0.0"
+                    override fun imageUrl() =
+                        "https://play-lh.googleusercontent.com/X64En0aW6jkvDnd5kr16u-YuUsoJ1W2cBzJab3CQ5lObLeQ3T61DpB7AwIoZ7uqgCn4"
+                },
+                onSelected = {})
         }
     }
 }
@@ -96,15 +90,40 @@ fun main(args: Array<String>) = singleWindowApplication {
     }
 }
 
+@Preview
+@Composable
+fun PreviewSelectable() {
+    StackzyTheme {
+        val dummyLib = LibraryWrapper(
+            Library(
+                category = "Category 1",
+                id = 0,
+                name = "My Lib",
+                packageName = "com.something",
+                replacementPackage = null,
+                website = ""
+            ), null
+        )
+        Selectable(data = dummyLib, onSelected = {
+
+        })
+    }
+}
+
 @Composable
 fun <T : AlphabetCircle> Selectable(
-    data: T, onSelected: (T) -> Unit, modifier: Modifier = Modifier, padding: Dp = 10.dp
+    data: T,
+    onSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    padding: Dp = 10.dp
 ) {
-
-    Row(modifier = modifier.fillMaxWidth().addHoverEffect(onClicked = {
-        onSelected(data)
-    }).padding(padding), verticalAlignment = Alignment.CenterVertically) {
-
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .addHoverEffect(onClicked = { onSelected(data) })
+            .padding(padding),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         if (data.imageUrl() == null) {
             // Show only alphabet
             AlphabetCircle(data)
@@ -114,22 +133,16 @@ fun <T : AlphabetCircle> Selectable(
                 resource = lazyPainterResource(data.imageUrl()!!),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = "app logo",
-                onLoading = {
-                    AlphabetCircle(data)
-                },
-                onFailure = {
-                    AlphabetCircle(data)
-                },
-
-                modifier = Modifier.size(60.dp).clip(CircleShape).background(MaterialTheme.colors.primary) // outer blue
+                onLoading = { AlphabetCircle(data) },
+                onFailure = { AlphabetCircle(data) },
+                modifier = Modifier
+                    .size(60.dp).clip(CircleShape).background(MaterialTheme.colors.primary) // outer blue
                     .padding(2.dp).clip(CircleShape).background(MaterialTheme.colors.secondary) // gap
                     .padding(4.dp).clip(CircleShape) // logo
             )
         }
 
-        Spacer(
-            modifier = Modifier.width(10.dp)
-        )
+        Spacer(modifier = Modifier.width(10.dp))
 
         Column {
 

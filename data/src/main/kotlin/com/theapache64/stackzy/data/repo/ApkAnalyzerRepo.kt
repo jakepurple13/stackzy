@@ -53,7 +53,8 @@ class ApkAnalyzerRepo @Inject constructor() {
             apkSizeInMb = "%.2f".format(Locale.US, apkFile.sizeInMb).toFloat(),
             assetsDir = getAssetsDir(decompiledDir).takeIf { it.exists() },
             permissions = getPermissions(decompiledDir),
-            gradleInfo = getGradleInfo(decompiledDir)
+            gradleInfo = getGradleInfo(decompiledDir),
+            fullManifest = getManifest(decompiledDir)
         )
     }
 
@@ -84,6 +85,11 @@ class ApkAnalyzerRepo @Inject constructor() {
                 GradleInfo.Sdk(it, androidVersionName)
             }
         )
+    }
+
+    fun getManifest(decompiledDir: File): String {
+        val manifestFile = Path(decompiledDir.absolutePath) / "AndroidManifest.xml"
+        return manifestFile.readText()
     }
 
     /**

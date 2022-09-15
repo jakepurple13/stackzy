@@ -61,9 +61,7 @@ fun Libraries(
                         onSelected = onLibrarySelected
                     )
 
-                    Spacer(
-                        modifier = Modifier.height(10.dp)
-                    )
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 
@@ -78,9 +76,7 @@ fun Libraries(
                         onSelected = onLibrarySelected
                     )
 
-                    Spacer(
-                        modifier = Modifier.height(10.dp)
-                    )
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 

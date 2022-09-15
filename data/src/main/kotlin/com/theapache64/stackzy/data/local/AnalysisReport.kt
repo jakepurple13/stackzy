@@ -17,6 +17,7 @@ interface AnalysisReportDefinition {
     val assetsDir: File?
     val permissions: Set<String>
     val gradleInfo: GradleInfo
+    val fullManifest: String
 }
 
 data class AnalysisReport(
@@ -28,12 +29,12 @@ data class AnalysisReport(
     override val apkSizeInMb: Float,
     override val assetsDir: File?,
     override val permissions: Set<String>,
-    override val gradleInfo: GradleInfo
+    override val gradleInfo: GradleInfo,
+    override val fullManifest: String
 ) : AnalysisReportDefinition
 
 
 fun AnalysisReport.toResult(resultsRepo: ResultsRepo, config: Config? = null, logoImageUrl: String): Result {
-
     return Result(
         appName = this.appName ?: this.packageName,
         packageName = this.packageName,
@@ -45,6 +46,7 @@ fun AnalysisReport.toResult(resultsRepo: ResultsRepo, config: Config? = null, lo
         permissions = this.permissions.joinToString(","),
         gradleInfoJson = resultsRepo.jsonify(this.gradleInfo),
         stackzyLibVersion = config?.latestStackzyLibVersion ?: 0,
-        logoImageUrl = logoImageUrl
+        logoImageUrl = logoImageUrl,
+        fullManifest = fullManifest
     )
 }

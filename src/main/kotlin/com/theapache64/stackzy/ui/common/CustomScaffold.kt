@@ -87,9 +87,7 @@ fun CustomScaffold(
             }
         }
 
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         Box {
             // Content slot
@@ -127,8 +125,5 @@ fun BoxScope.BottomGradient() {
 
 @Composable
 fun GradientMargin() {
-    Spacer(
-        modifier = Modifier
-            .height(BOTTOM_GRADIENT_HEIGHT)
-    )
+    Spacer(modifier = Modifier.height(BOTTOM_GRADIENT_HEIGHT))
 }

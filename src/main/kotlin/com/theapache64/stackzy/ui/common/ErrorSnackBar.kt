@@ -28,11 +28,7 @@ fun BoxScope.ErrorSnackBar(
         contentColor = MaterialTheme.colors.onSurface,
         action = {
             if (onRetryClicked != null) {
-                TextButton(
-                    onClick = onRetryClicked
-                ) {
-                    Text(R.string.all_action_retry)
-                }
+                TextButton(onClick = onRetryClicked) { Text(R.string.all_action_retry) }
             }
         }
     ) {
