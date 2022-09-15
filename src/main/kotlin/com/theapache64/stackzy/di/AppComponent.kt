@@ -9,6 +9,7 @@ import com.theapache64.stackzy.ui.feature.libdetail.LibraryDetailScreenComponent
 import com.theapache64.stackzy.ui.feature.liblist.LibraryListScreenComponent
 import com.theapache64.stackzy.ui.feature.login.LogInScreenComponent
 import com.theapache64.stackzy.ui.feature.pathway.PathwayScreenComponent
+import com.theapache64.stackzy.ui.feature.settings.SettingsComponent
 import com.theapache64.stackzy.ui.feature.splash.SplashScreenComponent
 import com.theapache64.stackzy.ui.feature.update.UpdateScreenComponent
 import dagger.Component
@@ -34,6 +35,8 @@ interface AppComponent {
     fun inject(updateScreenComponent: UpdateScreenComponent)
     fun inject(libraryListScreenComponent: LibraryListScreenComponent)
     fun inject(libraryDetailScreenComponent: LibraryDetailScreenComponent)
+
+    fun inject(settingsComponent: SettingsComponent)
 
     // bind repo to this component
     fun bind(): AdbRepo

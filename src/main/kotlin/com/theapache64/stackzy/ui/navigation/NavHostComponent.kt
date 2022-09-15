@@ -23,6 +23,7 @@ import com.theapache64.stackzy.ui.feature.libdetail.LibraryDetailScreenComponent
 import com.theapache64.stackzy.ui.feature.liblist.LibraryListScreenComponent
 import com.theapache64.stackzy.ui.feature.login.LogInScreenComponent
 import com.theapache64.stackzy.ui.feature.pathway.PathwayScreenComponent
+import com.theapache64.stackzy.ui.feature.settings.SettingsComponent
 import com.theapache64.stackzy.ui.feature.splash.SplashScreenComponent
 import com.theapache64.stackzy.ui.feature.update.UpdateScreenComponent
 import com.theapache64.stackzy.util.ApkSource
@@ -59,6 +60,8 @@ class NavHostComponent(
         data class LibraryDetail(
             val libraryWrapper: LibraryWrapper
         ) : Config()
+
+        object Settings : Config()
     }
 
     private val appComponent: AppComponent = DaggerAppComponent
@@ -144,6 +147,12 @@ class NavHostComponent(
                 libraryWrapper = config.libraryWrapper,
                 onLogInNeeded = ::onLogInNeeded
             )
+
+            is Config.Settings -> SettingsComponent(
+                appComponent = appComponent,
+                componentContext = componentContext,
+                onBackClicked = ::onBackClicked,
+            )
         }
     }
 
@@ -161,9 +170,7 @@ class NavHostComponent(
         Children(
             stack = router,
             animation = stackAnimation(scale() + fade())
-        ) { child ->
-            child.instance.render()
-        }
+        ) { child -> child.instance.render() }
     }
 
     /**
@@ -272,5 +279,8 @@ class NavHostComponent(
         navigator.pop()
     }
 
+    fun onSettingsScreen() {
+        navigator.push(Config.Settings)
+    }
 
 }

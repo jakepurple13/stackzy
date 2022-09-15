@@ -83,7 +83,7 @@ class MainActivity : Activity() {
             ) {
                 CompositionLocalProvider(LocalWindow provides this) {
                     StackzyTheme {
-                        MenuBar()
+                        MenuBar(root)
                         Surface(
                             shape = when (hostOs) {
                                 OS.Linux -> RoundedCornerShape(8.dp)
@@ -142,7 +142,7 @@ class MainActivity : Activity() {
 }
 
 @Composable
-private fun FrameWindowScope.MenuBar() {
+private fun FrameWindowScope.MenuBar(root: NavHostComponent) {
 
     val menuViewModel = remember { MenuViewModel() }
 
@@ -156,6 +156,10 @@ private fun FrameWindowScope.MenuBar() {
             CheckboxItem("Scrcpy", menuViewModel.hasScrcpy) { menuViewModel.openScrcpy() }
             Separator()
             Item("Refresh") { menuViewModel.refresh() }
+        }
+
+        Menu("Settings") {
+            Item("Open Settings") { root.onSettingsScreen() }
         }
     }
 }

@@ -8,6 +8,7 @@ import com.github.theapache64.gpa.api.Play
 import com.github.theapache64.gpa.model.Account
 import com.theapache64.stackzy.data.local.AndroidApp
 import com.theapache64.stackzy.data.repo.AdbRepo
+import com.theapache64.stackzy.data.repo.ConfigRepo
 import com.theapache64.stackzy.data.repo.InstallResource
 import com.theapache64.stackzy.data.repo.PlayStoreRepo
 import com.theapache64.stackzy.data.util.calladapter.flow.Resource
@@ -18,10 +19,7 @@ import com.theapache64.stackzy.util.ApkSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -30,7 +28,8 @@ import javax.inject.Inject
 
 class AppListViewModel @Inject constructor(
     private val adbRepo: AdbRepo,
-    private val playStoreRepo: PlayStoreRepo
+    private val playStoreRepo: PlayStoreRepo,
+    private val configRepo: ConfigRepo
 ) {
 
     companion object {
@@ -273,7 +272,7 @@ class AppListViewModel @Inject constructor(
         val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
         viewModelScope.launch {
             try {
-                adbRepo.screenshot(androidDeviceWrapper.androidDevice)
+                adbRepo.screenshot(androidDeviceWrapper.androidDevice, configRepo.getLocalConfig()!!.screenshotLocation)
             } catch (e: Exception) {
                 error = "Something went wrong"
             }
@@ -282,14 +281,13 @@ class AppListViewModel @Inject constructor(
 
     fun onAppDownload(appWrapper: AndroidAppWrapper) {
         viewModelScope.launch {
+            uiState = AppListState.Pulling
             val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
             val apkRemotePath = adbRepo.getApkPath(androidDeviceWrapper.androidDevice, appWrapper.androidApp)
             if (apkRemotePath != null) {
-                val downloads = System.getProperty("user.home") + "/Downloads"
+                val downloads = configRepo.getLocalConfig()!!.downloadApkLocation
 
                 val apkFile = File("$downloads/${appWrapper.appTitle ?: appWrapper.appPackage.name}.apk")
-
-                uiState = AppListState.Pulling
 
                 adbRepo.pullFile(
                     androidDeviceWrapper.androidDevice,
@@ -297,14 +295,8 @@ class AppListViewModel @Inject constructor(
                     apkFile
                 ).distinctUntilChanged()
                     .catch { error = it.message ?: "Something went wrong while pulling APK" }
-                    .collect { downloadPercentage ->
-                        installingProgress = downloadPercentage.toDouble() / 100
-
-                        if (downloadPercentage == 100) {
-                            // Give some time to APK to prepare for decompile
-                            uiState = AppListState.Default
-                        }
-                    }
+                    .onCompletion { uiState = AppListState.Default }
+                    .collect { downloadPercentage -> installingProgress = downloadPercentage.toDouble() / 100 }
             }
         }
     }

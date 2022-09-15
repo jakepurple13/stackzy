@@ -84,11 +84,13 @@ class SplashViewModel @Inject constructor(
                 is Resource.Loading -> {
                     _syncMsg.value = "Getting some fun facts for you..."
                 }
+
                 is Resource.Success -> {
                     val funFacts = resource.data
                     funFactsRepo.saveFunFactsToLocal(funFacts)
                     onSynced()
                 }
+
                 is Resource.Error -> {
                     _syncFailedMsg.value = resource.errorData
                 }
@@ -135,14 +137,24 @@ class SplashViewModel @Inject constructor(
                 is Resource.Loading -> {
                     _syncMsg.value = "Syncing config..."
                 }
+
                 is Resource.Success -> {
                     val config = it.data
                     val isConfigVerified = verifyConfig(config)
+                    val local = configRepo.getLocalConfig()
                     if (isConfigVerified) {
-                        configRepo.saveConfigToLocal(config)
+                        configRepo.saveConfigToLocal(
+                            config.copy(
+                                downloadApkLocation = local?.downloadApkLocation
+                                    ?: (System.getProperty("user.home") + "/Downloads"),
+                                screenshotLocation = local?.screenshotLocation
+                                    ?: (System.getProperty("user.home") + "/Desktop")
+                            )
+                        )
                         onSuccess()
                     }
                 }
+
                 is Resource.Error -> {
                     _syncFailedMsg.value = it.errorData
                 }

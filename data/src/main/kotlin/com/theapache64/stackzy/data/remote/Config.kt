@@ -21,4 +21,8 @@ data class Config(
     val isDown: Boolean,
     @Json(name = "down_reason")
     val downReason: String,
+    @Json(name = "download_apk_location")
+    val downloadApkLocation: String = System.getProperty("user.home") + "/Downloads",
+    @Json(name = "screenshot_location")
+    val screenshotLocation: String = System.getProperty("user.home") + "/Desktop"
 )

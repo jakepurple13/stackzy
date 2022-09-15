@@ -26,7 +26,6 @@ class LibraryDetailScreenComponent(
     lateinit var libDetailViewModel: LibraryDetailViewModel
 
     init {
-
         appComponent.inject(this)
     }
 

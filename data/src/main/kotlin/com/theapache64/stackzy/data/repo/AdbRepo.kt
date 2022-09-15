@@ -161,9 +161,7 @@ class AdbRepo @Inject constructor(
     ): String? {
         val cmd = "pm path ${androidApp.appPackage.name}"
         val response = adb.execute(
-            request = ShellCommandRequest(
-                cmd
-            ),
+            request = ShellCommandRequest(cmd),
             serial = androidDevice.device.serial
         )
 
@@ -365,6 +363,7 @@ class AdbRepo @Inject constructor(
 
     suspend fun screenshot(
         androidDevice: AndroidDevice,
+        fileLocation: String = System.getProperty("user.home") + "/Desktop"
     ) {
         val adapter = RawImageScreenCaptureAdapter()
         val image = adb.execute(
@@ -372,9 +371,8 @@ class AdbRepo @Inject constructor(
             serial = androidDevice.device.serial
         ).toBufferedImage()
 
-        val desktop = System.getProperty("user.home") + "/Desktop"
         val time = System.currentTimeMillis()
-        if (!ImageIO.write(image, "png", File("$desktop/Screen Shot ${dateFormat.format(time)}.png"))) {
+        if (!ImageIO.write(image, "png", File("$fileLocation/Screen Shot ${dateFormat.format(time)}.png"))) {
             throw IOException("Failed to find png writer")
         }
     }
