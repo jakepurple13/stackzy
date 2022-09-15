@@ -20,6 +20,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -127,6 +129,7 @@ class AppListViewModel @Inject constructor(
                     onTabClicked(tab)
                 }
             }
+
             is ApkSource.PlayStore -> {
 
                 // ### PLAY STORE ###
@@ -167,6 +170,7 @@ class AppListViewModel @Inject constructor(
 
                     _apps.value = Resource.Success(filteredApps.map { AndroidAppWrapper(it) })
                 }
+
                 is ApkSource.PlayStore -> {
                     if (isPlayStoreUrl(newKeyword)) {
                         // Pasted a play store url
@@ -275,6 +279,35 @@ class AppListViewModel @Inject constructor(
             }
         }
     }
+
+    fun onAppDownload(appWrapper: AndroidAppWrapper) {
+        viewModelScope.launch {
+            val androidDeviceWrapper = (apkSource as ApkSource.Adb).value
+            val apkRemotePath = adbRepo.getApkPath(androidDeviceWrapper.androidDevice, appWrapper.androidApp)
+            if (apkRemotePath != null) {
+                val downloads = System.getProperty("user.home") + "/Downloads"
+
+                val apkFile = File("$downloads/${appWrapper.appTitle ?: appWrapper.appPackage.name}.apk")
+
+                uiState = AppListState.Pulling
+
+                adbRepo.pullFile(
+                    androidDeviceWrapper.androidDevice,
+                    apkRemotePath,
+                    apkFile
+                ).distinctUntilChanged()
+                    .catch { error = it.message ?: "Something went wrong while pulling APK" }
+                    .collect { downloadPercentage ->
+                        installingProgress = downloadPercentage.toDouble() / 100
+
+                        if (downloadPercentage == 100) {
+                            // Give some time to APK to prepare for decompile
+                            uiState = AppListState.Default
+                        }
+                    }
+            }
+        }
+    }
 }
 
-enum class AppListState { Installing, DragDrop, Default }
+enum class AppListState { Installing, DragDrop, Default, Pulling }

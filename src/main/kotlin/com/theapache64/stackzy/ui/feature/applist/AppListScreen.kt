@@ -1,6 +1,8 @@
 package com.theapache64.stackzy.ui.feature.applist
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.ContextMenuArea
+import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -33,7 +35,8 @@ import java.awt.dnd.DnDConstants
 fun SelectAppScreen(
     appListViewModel: AppListViewModel,
     onBackClicked: () -> Unit,
-    onAppSelected: (AndroidAppWrapper) -> Unit
+    onAppSelected: (AndroidAppWrapper) -> Unit,
+    onAppDownload: (AndroidAppWrapper) -> Unit
 ) {
 
     val searchKeyword by appListViewModel.searchKeyword.collectAsState()
@@ -85,6 +88,10 @@ fun SelectAppScreen(
 
     Crossfade(appListViewModel.uiState) { installing ->
         when (installing) {
+            AppListState.Pulling -> {
+                LoadingAnimation("Pulling...", progress = appListViewModel.installingProgress)
+            }
+
             AppListState.DragDrop -> {
                 Card(modifier = Modifier.fillMaxSize()) {
                     Column(
@@ -199,15 +206,23 @@ fun SelectAppScreen(
                                     ) {
                                         items(items = apps, { it.appPackage }) { app ->
                                             Column(modifier = Modifier.animateItemPlacement()) {
-                                                // GridItem
-                                                Selectable(
-                                                    data = app,
-                                                    onSelected = onAppSelected
-                                                )
+                                                ContextMenuArea(
+                                                    items = {
+                                                        listOf(
+                                                            ContextMenuItem("Download Apk") { onAppDownload(app) }
+                                                        )
+                                                    }
+                                                ) {
+                                                    // GridItem
+                                                    Selectable(
+                                                        data = app,
+                                                        onSelected = onAppSelected
+                                                    )
 
-                                                Spacer(
-                                                    modifier = Modifier.height(10.dp)
-                                                )
+                                                    Spacer(
+                                                        modifier = Modifier.height(10.dp)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
