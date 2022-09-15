@@ -47,7 +47,7 @@ suspend fun chooseDirectorySwing(
         JFileChooser.APPROVE_OPTION -> chooser.selectedFile.absolutePath
         JFileChooser.CANCEL_OPTION -> null
         JFileChooser.ERROR_OPTION -> error("Something went wrong")
-        else -> error("Unknown return code '${code}' from JFileChooser::showOpenDialog")
+        else -> error("Unknown return code '${code}'")
     }
 }
 
