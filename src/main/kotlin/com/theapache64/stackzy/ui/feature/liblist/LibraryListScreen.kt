@@ -37,38 +37,23 @@ fun LibraryListScreen(
     val librariesResp by viewModel.libsResp.collectAsState()
     val subTitle by viewModel.subTitle.collectAsState()
 
-
     CustomScaffold(
         title = R.string.libraries_list_title,
         subTitle = subTitle,
         onBackClicked = onBackClicked,
         bottomGradient = librariesResp is Resource.Success,
         topRightSlot = {
-
             // SearchBox
             OutlinedTextField(
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = ""
-                    )
-                },
+                leadingIcon = { Icon(Icons.Outlined.Search, "") },
                 singleLine = true,
                 value = searchKeyword,
-                label = {
-                    Text(
-                        text = R.string.select_app_label_search,
-                    )
-                },
-                onValueChange = {
-                    viewModel.onSearchKeywordChanged(it)
-                },
-                modifier = Modifier
-                    .width(300.dp)
+                label = { Text(text = R.string.select_app_label_search) },
+                onValueChange = { viewModel.onSearchKeywordChanged(it) },
+                modifier = Modifier.width(300.dp)
             )
         }
     ) {
-
         when (librariesResp) {
             is Resource.Loading -> {
                 val message = (librariesResp as Resource.Loading<List<LibraryWrapper>>).message ?: ""
@@ -87,7 +72,6 @@ fun LibraryListScreen(
                 val libraries = (librariesResp as Resource.Success<List<LibraryWrapper>>).data
 
                 Column {
-
                     if (libraries.isNotEmpty()) {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(4),
@@ -108,7 +92,6 @@ fun LibraryListScreen(
                                 }
                             }
                         }
-
                     } else {
                         // No app found
                         FullScreenError(
@@ -117,10 +100,7 @@ fun LibraryListScreen(
                             image = painterResource("drawables/woman_desk.png"),
                         )
                     }
-
-
                 }
-
             }
 
             null -> {

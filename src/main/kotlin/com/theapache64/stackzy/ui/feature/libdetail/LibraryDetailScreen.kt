@@ -29,7 +29,6 @@ fun LibraryDetailScreen(
     val appsResp by viewModel.apps.collectAsState()
     val searchKeyword by viewModel.searchKeyword.collectAsState()
 
-
     CustomScaffold(
         title = pageTitle,
         onBackClicked = onBackClicked
@@ -41,18 +40,13 @@ fun LibraryDetailScreen(
             }
 
             is Resource.Error -> {
-                Box {
-                    ErrorSnackBar(
-                        (appsResp as Resource.Error<List<AndroidAppWrapper>>).errorData
-                    )
-                }
+                Box { ErrorSnackBar((appsResp as Resource.Error<List<AndroidAppWrapper>>).errorData) }
             }
 
             is Resource.Success -> {
                 val libraries = (appsResp as Resource.Success<List<AndroidAppWrapper>>).data
 
                 Column {
-
                     if (libraries.isNotEmpty()) {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(4),
@@ -73,7 +67,6 @@ fun LibraryDetailScreen(
                                 }
                             }
                         }
-
                     } else {
                         // No app found
                         FullScreenError(
@@ -83,7 +76,6 @@ fun LibraryDetailScreen(
                         )
                     }
                 }
-
             }
 
             null -> {
