@@ -1,5 +1,6 @@
 package com.theapache64.stackzy.ui.feature
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.arkivanov.decompose.DefaultComponentContext
@@ -62,8 +64,11 @@ class MainActivity : Activity() {
         application {
 
             val state = rememberWindowState(
-                width = 1224.dp,
-                height = 800.dp
+                size = DpSize(
+                    width = 1224.dp,
+                    height = 900.dp
+                ),
+                position = WindowPosition(Alignment.Center)
             )
 
             setContent(
@@ -82,7 +87,8 @@ class MainActivity : Activity() {
                                 OS.Windows -> RectangleShape
                                 OS.MacOS -> RoundedCornerShape(8.dp)
                                 else -> RoundedCornerShape(8.dp)
-                            }
+                            },
+                            modifier = Modifier.animateContentSize()
                         ) {
                             Column {
                                 WindowDraggableArea(
@@ -131,7 +137,7 @@ private fun ApplicationScope.LinuxTopBar(state: WindowState) {
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = ::exitApplication) { Icon(Icons.Default.Close, null) }
-            IconButton(onClick = { state.isMinimized = true }) { Icon(Icons.Default.Minimize, null) }
+            IconButton(onClick = { state.isMinimized = !state.isMinimized }) { Icon(Icons.Default.Minimize, null) }
             IconButton(
                 onClick = {
                     state.placement = if (state.placement != WindowPlacement.Maximized) WindowPlacement.Maximized
@@ -155,7 +161,7 @@ private fun ApplicationScope.WindowsTopBar(state: WindowState) {
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = ::exitApplication) { Icon(Icons.Default.Close, null) }
-            IconButton(onClick = { state.isMinimized = true }) { Icon(Icons.Default.Minimize, null) }
+            IconButton(onClick = { state.isMinimized = !state.isMinimized }) { Icon(Icons.Default.Minimize, null) }
             IconButton(
                 onClick = {
                     state.placement = if (state.placement != WindowPlacement.Maximized) WindowPlacement.Maximized
@@ -179,7 +185,7 @@ private fun ApplicationScope.MacOsTopBar(state: WindowState) {
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = ::exitApplication) { Icon(Icons.Default.Close, null) }
-            IconButton(onClick = { state.isMinimized = true }) { Icon(Icons.Default.Minimize, null) }
+            IconButton(onClick = { state.isMinimized = !state.isMinimized }) { Icon(Icons.Default.Minimize, null) }
             IconButton(
                 onClick = {
                     state.placement = if (state.placement != WindowPlacement.Fullscreen) WindowPlacement.Fullscreen
