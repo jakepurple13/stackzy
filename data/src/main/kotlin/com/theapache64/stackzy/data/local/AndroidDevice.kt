@@ -8,7 +8,7 @@ interface AndroidDeviceDefinition {
     val device: Device
 }
 
-class AndroidDevice(
+data class AndroidDevice(
     override val name: String,
     override val model: String,
     override val device: Device
