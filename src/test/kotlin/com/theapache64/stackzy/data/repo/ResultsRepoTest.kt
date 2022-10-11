@@ -59,7 +59,8 @@ class ResultsRepoTest {
             gradleInfoJson = "{}",
             permissions = "android.permission.INTERNET",
             stackzyLibVersion = 1,
-            logoImageUrl = DUMMY_IMAGE_URL
+            logoImageUrl = DUMMY_IMAGE_URL,
+            fullManifest = ""
         )
 
         resultsRepo.add(result).collect {
