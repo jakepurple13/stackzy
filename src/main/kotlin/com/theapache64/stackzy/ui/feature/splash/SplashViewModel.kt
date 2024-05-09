@@ -175,10 +175,10 @@ class SplashViewModel @Inject constructor(
 
         // Checking if update needed
         val isUpdateNeeded = App.appArgs.versionCode < config.mandatoryVersionCode // currentVersion < mandatoryVersion
-        if (isUpdateNeeded) {
+        /*if (isUpdateNeeded) {
             _shouldUpdate.tryEmit(true)
             return false
-        }
+        }*/
 
         return true
     }

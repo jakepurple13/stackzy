@@ -268,7 +268,7 @@ class NavHostComponent(
      */
     private fun onUpdateNeeded() {
         println("Update needed")
-        navigator.push(Config.Update)
+        //navigator.push(Config.Update)
     }
 
     /**

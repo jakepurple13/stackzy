@@ -69,18 +69,18 @@ class ApkAnalyzerRepo @Inject constructor() {
                 propertyUtils.isSkipMissingProperties = true
             }
         )
-        val yamlString = yamlFile.readText()
-        val metaInfo: MetaInfo = yaml.load(yamlString)
+        val yamlString = runCatching { yamlFile.readText() }.getOrNull()
+        val metaInfo: MetaInfo? = yamlString?.let { yaml.load(it) }
 
         // Building gradle info
         return GradleInfo(
-            versionCode = metaInfo.versionInfo?.versionCode,
-            versionName = metaInfo.versionInfo?.versionName,
-            minSdk = metaInfo.sdkInfo?.minSdkVersion?.let {
+            versionCode = metaInfo?.versionInfo?.versionCode,
+            versionName = metaInfo?.versionInfo?.versionName,
+            minSdk = metaInfo?.sdkInfo?.minSdkVersion?.let {
                 val androidVersionName = AndroidVersionIdentifier.getVersion(it)
                 GradleInfo.Sdk(it, androidVersionName)
             },
-            targetSdk = metaInfo.sdkInfo?.targetSdkVersion?.let {
+            targetSdk = metaInfo?.sdkInfo?.targetSdkVersion?.let {
                 val androidVersionName = AndroidVersionIdentifier.getVersion(it)
                 GradleInfo.Sdk(it, androidVersionName)
             }
@@ -89,7 +89,7 @@ class ApkAnalyzerRepo @Inject constructor() {
 
     fun getManifest(decompiledDir: File): String {
         val manifestFile = Path(decompiledDir.absolutePath) / "AndroidManifest.xml"
-        return manifestFile.readText()
+        return runCatching { manifestFile.readText() }.getOrElse { "" }
     }
 
     /**
@@ -102,8 +102,8 @@ class ApkAnalyzerRepo @Inject constructor() {
 
     fun getPermissionsFromManifestFile(manifestFile: Path): Set<String> {
         val permissions = mutableSetOf<String>()
-        val manifestRead = manifestFile.readText()
-        var matchResult = USER_PERMISSION_REGEX.find(manifestRead)
+        val manifestRead = runCatching { manifestFile.readText() }.getOrNull()
+        var matchResult = manifestRead?.let { USER_PERMISSION_REGEX.find(it) }
         while (matchResult != null) {
             permissions.add(matchResult.groupValues[1])
             matchResult = matchResult.next()
@@ -216,8 +216,8 @@ class ApkAnalyzerRepo @Inject constructor() {
      */
     fun getAppNameLabel(decompiledDir: File): String? {
         val manifestFile = Path(decompiledDir.absolutePath) / "AndroidManifest.xml"
-        val manifestContent = manifestFile.readText()
-        val match = APP_LABEL_MANIFEST_REGEX.find(manifestContent)
+        val manifestContent = runCatching { manifestFile.readText() }.getOrNull()
+        val match = manifestContent?.let { APP_LABEL_MANIFEST_REGEX.find(it) }
         return if (match != null && match.groupValues.isNotEmpty()) {
             match.groups[1]?.value
         } else {

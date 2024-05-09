@@ -31,11 +31,11 @@ fun SplashScreen(
     val syncMessage by splashViewModel.syncMsg.collectAsState()
     val shouldUpdate by splashViewModel.shouldUpdate.collectAsState(initial = false)
 
-    LaunchedEffect(shouldUpdate) {
+    /*LaunchedEffect(shouldUpdate) {
         if (shouldUpdate) {
             onUpdateNeeded()
         }
-    }
+    }*/
 
     if (isSyncFinished) {
         onSyncFinished()
