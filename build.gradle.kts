@@ -1,15 +1,14 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.7.0"
+    val kotlinVersion = "1.9.0"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
-    id("org.jetbrains.compose") version "1.2.0-alpha01-dev741"
+    id("org.jetbrains.compose") version "1.5.0-beta01"
 }
 
-val daggerVersion by extra("2.43.2")
+val daggerVersion by extra("2.47")
 val stackzyVersion by extra("1.3.5") // TODO : Change in App.kt also
 
 group = "com.theapache64"
@@ -51,7 +50,7 @@ dependencies {
     implementation("com.github.theapache64:name-that-color:1.0.0-alpha02")
 
     // Kamel : Image loading library
-    implementation("com.alialbaali.kamel:kamel-image:0.4.1")
+    implementation("media.kamel:kamel-image:0.9.5")
 
     val bouncyCastleVersion = "1.70"
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
@@ -86,7 +85,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "15"
+    kotlinOptions.jvmTarget = "17"
     // kotlinOptions.freeCompilerArgs += "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi"
     // kotlinOptions.freeCompilerArgs += "-Xuse-experimental=androidx.compose.ui.ExperimentalComposeUiApi"
     // kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.io.path.ExperimentalPathApi"
@@ -143,9 +142,9 @@ compose.desktop {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = JavaVersion.VERSION_17.toString()
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = JavaVersion.VERSION_17.toString()
 }

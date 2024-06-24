@@ -51,7 +51,7 @@ fun Libraries(
         ) {
             items(
                 items = report.libraryWrappers,
-                { it.id }
+                //{ it.id }
             ) { app ->
                 Column(modifier = Modifier.animateItemPlacement()) {
                     // GridItem

@@ -34,7 +34,7 @@ fun SettingsScreen(
                 onClick = { settingsViewModel.changeDownloadApkLocation() }
             ) {
                 ListItem(
-                    headlineText = { Text("Download Apk Location") },
+                    headlineContent = { Text("Download Apk Location") },
                     trailingContent = {
                         Text(
                             settingsViewModel.downloadApkLocation,
@@ -49,7 +49,7 @@ fun SettingsScreen(
                 onClick = { settingsViewModel.changeScreenshotLocation() }
             ) {
                 ListItem(
-                    headlineText = { Text("Screenshot Location") },
+                    headlineContent = { Text("Screenshot Location") },
                     trailingContent = {
                         Text(
                             settingsViewModel.screenshotLocation,

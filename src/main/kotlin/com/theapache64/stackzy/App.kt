@@ -36,6 +36,9 @@ class App(
  * The magic begins here
  */
 fun main() {
+    Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        e.printStackTrace()
+    }
     // Parsing application arguments
     val appArgs = AppArgs(
         appName = "Stackzy",

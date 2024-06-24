@@ -77,7 +77,7 @@ fun LibraryListScreen(
                             columns = GridCells.Fixed(4),
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            items(libraries, { it.hashCode() }) { library ->
+                            items(libraries /*{ it.hashCode() }*/) { library ->
                                 Column(modifier = Modifier.animateItemPlacement()) {
                                     // GridItem
                                     Selectable(
